@@ -4,8 +4,8 @@
 #include <sstream>
 #include <iomanip>
 
-#include "Lexer.h"
-#include "Grammar.h"
+#include "src/Lexer.h"
+#include "src/Grammar.h"
 
 int main() {
     Expression *finalExpr = new BinaryExpression(new LiteralExpression(Token(TokenType::NUMBER, "44")), Token(TokenType::PLUS), new BinaryExpression(new LiteralExpression(Token(TokenType::NUMBER, "4")), Token(TokenType::STAR), new LiteralExpression(Token(TokenType::NUMBER, "33"))));
