@@ -1,0 +1,21 @@
+function multAB(a : int32, b : int32) int32 {
+	return 2 * a + b - b + (a * b);
+}
+	
+function fakeMult(a : int32, b : int32) int32 {
+	return a ^ (b - 1);
+}
+
+function main() int32 {
+	int32 int32number = 0, y = 0, z = multAB(int32number, y);
+	char c = 'a';
+	bool truetruetrue = true;
+	if(z <= 15 && truetruetrue) {
+		print(1);
+	} else {
+		z = 15;
+		print(2);
+	}
+	print(z);
+	return 0;
+};
