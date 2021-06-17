@@ -3,14 +3,23 @@
 #define GRAMMAR_H
 
 #include "Lexer.h"
+#include "Parser.h"
 
-class Expression {
+class Statement {
+private:
+    virtual std::ostream& hiddenPrint(std::ostream &os) const = 0;
+public:
+    Statement();
+    virtual ~Statement() = 0;
+    friend std::ostream& operator <<(std::ostream &os, const Statement &expr);
+};
+
+class Expression : public Statement {
 private:
     virtual std::ostream& hiddenPrint(std::ostream &os) const = 0;
 public:
     Expression();
     virtual ~Expression() = 0;
-    friend std::ostream& operator <<(std::ostream &os, const Expression &expr);
 };
 
 class LiteralExpression final : public Expression {
@@ -22,14 +31,14 @@ public:
     ~LiteralExpression();
 };
 
-class BinaryExpression final : public Expression{
+class BinaryExpression final : public Expression {
 private:
     std::ostream& hiddenPrint(std::ostream &os) const;
 public:
     Expression *left;
-    Token operation;
+    TokenType operation;
     Expression *right;
-    BinaryExpression(Expression *_left, const Token &_operation, Expression *_right);
+    BinaryExpression(Expression *_left, const TokenType &_operation, Expression *_right);
     ~BinaryExpression();
 };
 
@@ -37,20 +46,19 @@ class UnaryExpression final : public Expression {
 private:
     std::ostream& hiddenPrint(std::ostream &os) const;
 public:
-    Token operation;
+    TokenType operation;
     Expression *expr;
-    UnaryExpression(const Token &_operation, Expression *_expr);
+    UnaryExpression(const TokenType &_operation, Expression *_expr);
     ~UnaryExpression();
 };
 
-class GroupedExpression final : public Expression {
+class ExpressionStatement final : public Statement {
 private:
     std::ostream& hiddenPrint(std::ostream &os) const;
 public:
     Expression *expr;
-    Token bracket;
-    GroupedExpression(Expression *_expr, const Token _bracket = Token(TokenType::L_PAREN));
-    ~GroupedExpression();
+    ExpressionStatement(Expression *_expr);
+    ~ExpressionStatement();
 };
 
 #endif // GRAMMAR_H

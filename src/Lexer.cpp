@@ -11,7 +11,7 @@ bool isLetter(const char c) { return isSmallLetter(c) || isBigLetter(c); }
 bool isWhitespace(const char c) { return c == ' ' || c == '\n' || c == '\t'; }
 bool isBracket(const char c) { return c == '(' || c == ')' || c == '{' || c == '}' || c == '[' || c == ']'; }
 bool isOperator(const char c) { return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '&' || c == '|' || c == '^' || c == '~' || c == '=' || c == '<' || c == '>' || c == '!'; }
-bool isSeparator(const char c) { return c == ';' || c == ':' || c == '.' || c == ','; }
+bool isSeparator(const char c) { return c == ';' || c == ':' || c == '.' || c == ',' || c == '?'; }
 
 int typeOfChar(const char c) {
     if(isWhitespace(c)) {
@@ -34,18 +34,6 @@ void LexerError(int line) {
     std::cout << "Lexer error at " << line << std::endl;
     exit(0);
 }
-
-std::string TokenTypeName[TokenType::size] = {
-    "else", "function", "for", "if", "return", "while",
-    "int8", "int16", "int32", "int64", "float32", "float64",
-    "uint8", "uint16", "uint32", "uint64",
-    "+", "-", "*", "/", "%", "|", "&", "^", "~",
-    "+=", "-=", "*=", "/=", "%=", "|=", "&=", "^=", "=",
-    "!", "!=", "==", "<", "<=", ">", ">=", "||", "&&", "^^",
-    ",", ";", ".", ":",
-    "{", "}", "(", ")", "[", "]",
-    "character", "number", "boolean", "string", "name"
-};
 
 /***********************LexerTrie class**********************/
 LexerTrie::Node::Node() {
@@ -248,13 +236,6 @@ void setupLexer(Lexer &lexer) {
         //Keywords:
         {"else", TokenType::ELSE}, {"function", TokenType::FUNCTION}, {"function", TokenType::FUNCTION},
         {"for", TokenType::FOR}, {"if", TokenType::IF}, {"return", TokenType::RETURN}, {"while", TokenType::WHILE},
-        //Identifiers
-        {"bool", TokenType::INT8}, {"char", TokenType::INT8}, {"int8", TokenType::INT8}, {"uint8", TokenType::UINT8}, //1 byte integer
-        {"int16", TokenType::INT16}, {"uint16", TokenType::UINT16}, //2 byte integer
-        {"int32", TokenType::INT32}, {"uint32", TokenType::UINT32}, //4 byte integer
-        {"int64", TokenType::INT64}, {"uint64", TokenType::UINT64}, //8 byte integer
-        {"float", TokenType::FLOAT32}, {"float32", TokenType::FLOAT32}, //4 byte floating point number
-        {"float64", TokenType::FLOAT64}, //8 byte floating point number
         //Operators
         {"+", TokenType::PLUS}, {"-", TokenType::MINUS}, {"*", TokenType::STAR}, {"/", TokenType::SLASH}, {"%", TokenType::MODULO}, //'Constant' operators
         {"|", TokenType::OR}, {"&", TokenType::AND}, {"^", TokenType::XOR}, {"~", TokenType::NOT}, //'Constant' bitwise operators
@@ -264,7 +245,7 @@ void setupLexer(Lexer &lexer) {
         {"!", TokenType::BANG}, {"!", TokenType::BANG_EQUAL}, {"==", TokenType::EQUAL_EQUAL}, {"<", TokenType::LESS}, {"<=", TokenType::LESS_EQUAL},
         {"<", TokenType::GREATER}, {"<=", TokenType::GREATER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR},
         //Separators
-        {",", TokenType::COMMA}, {";", TokenType::SEMICOLON}, {".", TokenType::DOT}, {":", TokenType::COLON},
+        {",", TokenType::COMMA}, {";", TokenType::SEMICOLON}, {".", TokenType::DOT}, {":", TokenType::COLON}, {"?", TokenType::COLON},
         //Brackets
         {"(", TokenType::L_PAREN}, {")", TokenType::R_PAREN}, {"{", TokenType::L_BRACE}, {"}", TokenType::R_BRACE}, {"[", TokenType::L_SQUARE_BRACKET}, {"]", TokenType::R_SQUARE_BRACKET},
         //Literals

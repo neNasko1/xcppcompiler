@@ -10,17 +10,14 @@
 const int ASCII_SIZE = 256;
 enum TokenType {
     //Keywords
-    ELSE, FUNCTION, FOR, IF, RETURN, WHILE,
-    //Identifiers
-    INT8, INT16, INT32, INT64, FLOAT32, FLOAT64,
-    UINT8, UINT16, UINT32, UINT64,
+    ELSE, FUNCTION, FOR, IF, RETURN, VAR, WHILE,
     //Operators
     PLUS, MINUS, STAR, SLASH, MODULO, OR, AND, XOR, NOT,
     PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL, MODULO_EQUAL, OR_EQUAL, AND_EQUAL, XOR_EQUAL, EQUAL,
     //Boolean operators
     BANG, BANG_EQUAL, EQUAL_EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, OROR, ANDAND, XORXOR,
     //Separators
-    COMMA, SEMICOLON, DOT, COLON,
+    COMMA, SEMICOLON, DOT, COLON, QUESTION_MARK,
     //Brackets
     L_BRACE, R_BRACE, L_PAREN, R_PAREN, L_SQUARE_BRACKET, R_SQUARE_BRACKET,
     //Literals
@@ -28,7 +25,15 @@ enum TokenType {
     size
 };
 
-extern std::string TokenTypeName[TokenType::size];
+const std::string TokenTypeName[TokenType::size] = {
+    "else", "function", "for", "if", "return", "var", "while",
+    "+", "-", "*", "/", "%", "|", "&", "^", "~",
+    "+=", "-=", "*=", "/=", "%=", "|=", "&=", "^=", "=",
+    "!", "!=", "==", "<", "<=", ">", ">=", "||", "&&", "^^",
+    ",", ";", ".", ":", "?",
+    "{", "}", "(", ")", "[", "]",
+    "character", "number", "boolean", "string", "name"
+};
 
 #define LINE() __LINE__
 void LexerError(int line);
