@@ -10,8 +10,8 @@ bool isBigLetter(const char c) { return 'A' <= c && c <= 'Z'; }
 bool isLetter(const char c) { return isSmallLetter(c) || isBigLetter(c); }
 bool isWhitespace(const char c) { return c == ' ' || c == '\n' || c == '\t'; }
 bool isBracket(const char c) { return c == '(' || c == ')' || c == '{' || c == '}' || c == '[' || c == ']'; }
-bool isOperator(const char c) { return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '&' || c == '|' || c == '^' || c == '~' || c == '=' || c == '<' || c == '>' || c == '!'; }
-bool isSeparator(const char c) { return c == ';' || c == ':' || c == '.' || c == ',' || c == '?'; }
+bool isOperator(const char c) { return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '&' || c == '|' || c == '^' || c == '~' || c == '=' || c == '<' || c == '>' || c == '!' || c == ','; }
+bool isSeparator(const char c) { return c == ';' || c == ':' || c == '.' || c == '?'; }
 
 int typeOfChar(const char c) {
     if(isWhitespace(c)) {
@@ -38,8 +38,8 @@ void LexerError(int line) {
 /***********************LexerTrie class**********************/
 LexerTrie::Node::Node() {
     for(size_t i = 0; i < ASCII_SIZE; i ++) {
-            nxt[i] = nullptr;
-        }
+        nxt[i] = nullptr;
+    }
     type = TokenType::NAME;
 }
 
@@ -83,7 +83,6 @@ int LexerTrie::findWord(const std::string &toFind) const {
 }
 
 /***********************Token class*************************/
-
 Token::Token() {}
 Token::Token(const TokenType &_type, const std::string &_rawValue, const int &_lineNmb, const int &_startPos) : type(_type), rawValue(_rawValue), lineNmb(_lineNmb), startPos(_startPos) {}
 Token::~Token() {}
@@ -92,8 +91,30 @@ std::ostream& operator <<(std::ostream &out, const Token &token) {
     return out << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.rawValue << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
 }
 
-/***********************Lexer class ************************/
+/*
+ * Returns if tokentype can be an unary operator
+ */
+bool canBeUnaryOperator(const Token &token) {
+    return token.type == TokenType::PLUS || token.type == TokenType::BANG || token.type == TokenType::AND 
+        || token.type == TokenType::NOT || token.type == TokenType::STAR || token.type == TokenType::MINUS;
+}
 
+/*
+ * Transforms token to its unary form if it has, or doesnt do anything if it doesnt.
+ */
+void transformToMatchingUnary(Token &token) {
+    if(token.type == TokenType::PLUS) {
+        token.type = TokenType::UNARY_PLUS;
+    } else if(token.type == TokenType::MINUS) {
+        token.type = TokenType::UNARY_MINUS;
+    } else if(token.type == TokenType::STAR) {
+        token.type = TokenType::UNARY_DEREFERENCE;
+    } else if(token.type == TokenType::AND) {
+        token.type = TokenType::UNARY_REFERENCE;
+    } 
+}
+
+/***********************Lexer class ************************/
 Lexer::Lexer() : code(), codePtr(0), lineNmb(0), charNmb(0), lexTrie() {}
 Lexer::Lexer(std::string _code) : code(_code), codePtr(0), lineNmb(0), charNmb(0), lexTrie() {}
 Lexer::~Lexer() {}
@@ -243,9 +264,9 @@ void setupLexer(Lexer &lexer) {
         {"|=", TokenType::OR_EQUAL}, {"&=", TokenType::AND_EQUAL}, {"^=", TokenType::XOR_EQUAL}, {"=", TokenType::EQUAL}, //'Nonconstant' operators
         //Boolean operators
         {"!", TokenType::BANG}, {"!", TokenType::BANG_EQUAL}, {"==", TokenType::EQUAL_EQUAL}, {"<", TokenType::LESS}, {"<=", TokenType::LESS_EQUAL},
-        {"<", TokenType::GREATER}, {"<=", TokenType::GREATER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR},
+        {"<", TokenType::GREATER}, {"<=", TokenType::GREATER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR}, {",", TokenType::COMMA},
         //Separators
-        {",", TokenType::COMMA}, {";", TokenType::SEMICOLON}, {".", TokenType::DOT}, {":", TokenType::COLON}, {"?", TokenType::COLON},
+        {";", TokenType::SEMICOLON}, {".", TokenType::DOT}, {":", TokenType::COLON}, {"?", TokenType::COLON},
         //Brackets
         {"(", TokenType::L_PAREN}, {")", TokenType::R_PAREN}, {"{", TokenType::L_BRACE}, {"}", TokenType::R_BRACE}, {"[", TokenType::L_SQUARE_BRACKET}, {"]", TokenType::R_SQUARE_BRACKET},
         //Literals

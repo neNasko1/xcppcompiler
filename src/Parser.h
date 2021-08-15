@@ -3,22 +3,28 @@
 #define PARSER_H
 
 #include <vector>
+#include <stack>
 #include "Lexer.h"
 #include "Grammar.h"
+
+void ParserError(int line);
 
 class Statement;
 class Expression;
 
 class Parser {
-private:
+//private:
+public:
     std::vector<Token> tokens;
     int codePtr;
-    char peek() const;
-    char advance();
-    bool match();
+    Token peek() const;
+    Token advance();
+    bool match(const Token &token);
     bool isAtEnd() const;
 
     Statement *recogniseStatement();
+    
+    void combineTop(std::stack<Expression* > &expStack, std::stack<Token> &opStack) const;
     Expression *recogniseExpression();
 public:
     static int tabIdentation;
