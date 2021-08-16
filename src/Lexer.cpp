@@ -25,13 +25,13 @@ int typeOfChar(const char c) {
     } else if(isSeparator(c)) {
         return 4;
     }
-    std::cout << "Unknown type of char " << c << std::endl;
+    std::cerr << "Unknown type of char " << c << std::endl;
     LexerError(LINE());
     return -100;
 }
 
 void LexerError(int line) {
-    std::cout << "Lexer error at " << line << std::endl;
+    std::cerr << "Lexer error at " << line << std::endl;
     exit(0);
 }
 
@@ -193,7 +193,7 @@ Token Lexer::recognizeString() {
         this->advance();
     }
     if(this->isAtEnd()) {
-        std::cout << "String not closed " << std::endl;
+        std::cerr << "String not closed " << std::endl;
         LexerError(LINE());
     }
     return Token(TokenType::STRING, stringValue);
@@ -203,12 +203,12 @@ Token Lexer::recognizeChar() {
     std::string charValue = "";
     this->advance();
     if(this->isAtEnd()) {
-        std::cout << "Char not closed " << std::endl;
+        std::cerr << "Char not closed " << std::endl;
         LexerError(LINE());
     }
     charValue.push_back(this->advance());
     if(this->isAtEnd() || this->peek() != '\'') {
-        std::cout << "Char not closed " << std::endl;
+        std::cerr << "Char not closed " << std::endl;
         LexerError(LINE());
     }
     this->advance();
@@ -234,7 +234,7 @@ void Lexer::lex() {
         } else if(current == '\'') {
             currentToken = this->recognizeChar();
         } else {
-            std::cout << "Parsing error: Found character " << current << " at " << this->lineNmb << " " << this->charNmb << std::endl;
+            std::cerr << "Parsing error: Found character " << current << " at " << this->lineNmb << " " << this->charNmb << std::endl;
             LexerError(LINE());
         }
         currentToken.lineNmb = this->lineNmb;
@@ -245,11 +245,11 @@ void Lexer::lex() {
 
 void Lexer::printLexed() const {
     std::ios init(NULL);
-    init.copyfmt(std::cout);
+    init.copyfmt(std::cerr);
     for(auto &it : this->lexed) {
-        std::cout << it;
+        std::cerr << it;
     }
-    std::cout.copyfmt(init);
+    std::cerr.copyfmt(init);
 }
 
 void setupLexer(Lexer &lexer) {

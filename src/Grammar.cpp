@@ -55,6 +55,24 @@ std::ostream& UnaryExpression::hiddenPrint(std::ostream &os) const {
     return os;
 }
 
+
+FunctionCall::FunctionCall(std::string _name, std::vector<Expression*> &_parameters) : name(_name), parameters(_parameters) {} 
+FunctionCall::FunctionCall() {}
+FunctionCall::~FunctionCall() {}
+
+std::ostream &FunctionCall::hiddenPrint(std::ostream &os) const {
+    os << Parser::getTabIdentation();
+    os << "Function call " << this->name << " {" << std::endl;
+    Parser::addTabIdentation(+1);
+    for(const auto &param : this->parameters) {
+        os << *(param) << std::endl;
+    }
+    Parser::addTabIdentation(-1);
+    os << Parser::getTabIdentation();
+    os << "}";
+    return os;    
+}
+
 ExpressionStatement::ExpressionStatement(Expression *_expr) : expr(_expr) {}
 ExpressionStatement::~ExpressionStatement() {delete expr;}
 std::ostream& ExpressionStatement::hiddenPrint(std::ostream &os) const {
