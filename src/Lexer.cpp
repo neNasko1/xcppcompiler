@@ -17,13 +17,13 @@ int typeOfChar(const char c) {
     if(isWhitespace(c)) {
         return -1; //Whitespace
     } else if(isDigit(c) || isLetter(c)) {
-        return 1;
+        return 1; //Digit or letter
     } else if(isOperator(c)) {
-        return 2;
+        return 2; //Operator
     } else if(isBracket(c)) {
-        return 3;
+        return 3; // Bracket
     } else if(isSeparator(c)) {
-        return 4;
+        return 4; // Separator
     }
     std::cerr << "Unknown type of char " << c << std::endl;
     LexerError(LINE());
@@ -42,6 +42,8 @@ LexerTrie::Node::Node() {
     }
     type = TokenType::NAME;
 }
+
+LexerTrie::Node::~Node() {}
 
 void LexerTrie::advance(Node *&curr, const char c) const {
     if(!curr || !curr->nxt[(int)c]) {
@@ -73,7 +75,7 @@ void LexerTrie::addWord(const std::string &toAdd, const TokenType &type) {
     currNode->type = type;
 }
 
-int LexerTrie::findWord(const std::string &toFind) const {
+TokenType LexerTrie::findWord(const std::string &toFind) const {
     auto currNode = root;
     for(auto &it : toFind) {
         currNode = currNode->nxt[(int)it];
@@ -87,8 +89,8 @@ Token::Token() {}
 Token::Token(const TokenType &_type, const std::string &_rawValue, const int &_lineNmb, const int &_startPos) : type(_type), rawValue(_rawValue), lineNmb(_lineNmb), startPos(_startPos) {}
 Token::~Token() {}
 
-std::ostream& operator <<(std::ostream &out, const Token &token) {
-    return out << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.rawValue << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
+std::ostream& operator <<(std::ostream &os, const Token &token) {
+    return os << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.rawValue << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
 }
 
 /*

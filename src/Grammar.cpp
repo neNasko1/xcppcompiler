@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include "Grammar.h"
+#include "Parser.h"
 
 std::ostream& operator <<(std::ostream &os, const Statement &stmt) {
     return stmt.hiddenPrint(os);
@@ -57,7 +58,6 @@ std::ostream& UnaryExpression::hiddenPrint(std::ostream &os) const {
 
 
 FunctionCall::FunctionCall(std::string _name, std::vector<Expression*> &_parameters) : name(_name), parameters(_parameters) {} 
-FunctionCall::FunctionCall() {}
 FunctionCall::~FunctionCall() {}
 
 std::ostream &FunctionCall::hiddenPrint(std::ostream &os) const {
