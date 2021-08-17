@@ -172,23 +172,23 @@ public:
 };
 
 /**
- * @brief Class token containing the raw value of the token and the type of token
+ * @brief Class token containing the information about a token
  * 
  */
 class Token {
 public:
 
     /**
-     * @brief Type of token 
+     * @brief Type of the token 
      * 
      */
     TokenType type;
 
     /**
-     * @brief Raw value of token
+     * @brief Lexeme of the token
      * 
      */
-    std::string rawValue;
+    std::string lexeme;
 
     /**
      * @brief Line number in file
@@ -211,12 +211,12 @@ public:
     /**
      * @brief Construct a new Token object
      * 
-     * @param _type Type of token 
-     * @param _rawValue Raw value of token
+     * @param _type Type of the token 
+     * @param _lexeme Lexeme of the token
      * @param _lineNmb Line number in file
      * @param _startPos Position in line
      */
-    Token(const TokenType &_type, const std::string &_rawValue = "", const int &_lineNmb = 0, const int &_startPos = 0);
+    Token(const TokenType &_type, const std::string &_lexeme = "", const int &_lineNmb = 0, const int &_startPos = 0);
 
     /**
      * @brief Destroy the Token object

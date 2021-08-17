@@ -15,7 +15,7 @@ LiteralExpression::~LiteralExpression() {}
 std::ostream& LiteralExpression::hiddenPrint(std::ostream &os) const {
     // Print contents 
     os << Parser::getTabIdentation();
-    os << this->value.rawValue;
+    os << this->value.lexeme;
     return os;
 }
 

@@ -86,11 +86,11 @@ TokenType LexerTrie::findWord(const std::string &toFind) const {
 
 /***********************Token class*************************/
 Token::Token() {}
-Token::Token(const TokenType &_type, const std::string &_rawValue, const int &_lineNmb, const int &_startPos) : type(_type), rawValue(_rawValue), lineNmb(_lineNmb), startPos(_startPos) {}
+Token::Token(const TokenType &_type, const std::string &_lexeme, const int &_lineNmb, const int &_startPos) : type(_type), lexeme(_lexeme), lineNmb(_lineNmb), startPos(_startPos) {}
 Token::~Token() {}
 
 std::ostream& operator <<(std::ostream &os, const Token &token) {
-    return os << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.rawValue << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
+    return os << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.lexeme << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
 }
 
 bool canBeUnaryOperator(const Token &token) {

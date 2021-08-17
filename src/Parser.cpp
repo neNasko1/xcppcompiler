@@ -48,7 +48,7 @@ std::string Parser::getTabIdentation() {
 Expression *Parser::recogniseFunctionCall() {
     std::vector<Expression*> parameters;
     // We know that the next character is a name;
-    std::string name = this->advance().rawValue;
+    std::string name = this->advance().lexeme;
 
     this->match(TokenType::L_PAREN);
 
