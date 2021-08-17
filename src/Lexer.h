@@ -245,7 +245,7 @@ void transformToMatchingUnary(Token &token);
  * @brief Returns whether the token can be an unary operator
  * 
  * @param token Token to check
- * @return bool Is the operator unary
+ * @return true if token is an operator and the operator can be unary and false otherwise
  */
 bool canBeUnaryOperator(const Token &token);
 
@@ -302,7 +302,7 @@ private:
     /**
      * @brief Check if codePtr is at the end of the input code
      * 
-     * @return bool Is codePtr at the end of code
+     * @return true if lexer pointer is at the end of input and false otherwise 
      */
     bool isAtEnd() const;
 

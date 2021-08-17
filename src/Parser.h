@@ -55,24 +55,17 @@ public:
      * @brief If current token matches the given type advance 
      * 
      * @param type Type to match
-     * @return bool Did the parser advance
+     * @return true if the parser pointer advanced and false otherwise
      */
     bool match(const TokenType &type);
 
     /**
      * @brief Check if codePtr is at the end of the input code
      * 
-     * @return bool Is codePtr at the end of code
+     * @return true if the parser pointer is at the end of input
      */
     bool isAtEnd() const;
 
-    /**
-     * @brief Recognize statement starting from codePtr
-     * 
-     * @return Statement* Recognized statement
-     */
-    Statement *recogniseStatement();
-    
     /**
      * @brief Execute the top operation in opStack and combine some of the top elements from expStack
      * 
@@ -82,18 +75,32 @@ public:
     void combineTop(std::stack<Expression* > &expStack, std::stack<Token> &opStack) const;
 
     /**
-     * @brief Recognize expression starting from codePtr
+     * @brief Recognize expression starting from the parser pointer
      * 
      * @return Expression* 
      */
     Expression *recogniseExpression();
 
     /**
-     * @brief Recognize function call starting from codePtr
+     * @brief Recognize function call starting from the parser pointer
      * 
      * @return Expression* 
      */
     Expression *recogniseFunctionCall();
+
+    /**
+     * @brief Recognize expression statement starting from the parser pointer
+     * 
+     * @return Statement* Recognized statement
+     */
+    Statement *recogniseExpressionStatement();
+
+    /**
+     * @brief Recognize statement list starting from the parser pointer starting with a L_BRACE and ending at a R_BRACE
+     * 
+     * @return Statement* Recognized statement list
+     */
+    Statement *recogniseStatementList();
 
 public:
     // TODO: move to a different location
@@ -131,7 +138,20 @@ public:
     ~Parser();
 };
 
+/**
+ * @brief 
+ * 
+ * @param token 
+ * @return true if token can be start of an expression and false otherwise
+ */
 bool isStartOfExpression(const Token &token);
+
+/**
+ * @brief 
+ * 
+ * @param token 
+ * @return true if token can be start of an expression and false otherwise
+ */
 bool isSeparatorToken(const Token &token);
 
 #endif // PARSER_H

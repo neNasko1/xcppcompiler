@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     // lex.printLexed();
 
     Parser parser(lexer.lexed);
-    Expression *firstLine = parser.recogniseExpression();
+    Statement *firstLine = parser.recogniseStatementList();
 
     std::cout << (*firstLine) << std::endl;
 

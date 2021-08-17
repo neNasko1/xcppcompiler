@@ -93,17 +93,11 @@ std::ostream& operator <<(std::ostream &os, const Token &token) {
     return os << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.rawValue << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
 }
 
-/*
- * Returns if tokentype can be an unary operator
- */
 bool canBeUnaryOperator(const Token &token) {
     return token.type == TokenType::PLUS || token.type == TokenType::BANG || token.type == TokenType::AND 
         || token.type == TokenType::NOT || token.type == TokenType::STAR || token.type == TokenType::MINUS;
 }
 
-/*
- * Transforms token to its unary form if it has, or doesnt do anything if it doesnt.
- */
 void transformToMatchingUnary(Token &token) {
     if(token.type == TokenType::PLUS) {
         token.type = TokenType::UNARY_PLUS;
@@ -256,7 +250,7 @@ void Lexer::printLexed() const {
 
 void setupLexer(Lexer &lexer) {
     std::vector<std::pair<std::string, TokenType> > stringToTokentype = {
-        //Keywords:
+        //Keywords
         {"else", TokenType::ELSE}, {"function", TokenType::FUNCTION}, {"function", TokenType::FUNCTION},
         {"for", TokenType::FOR}, {"if", TokenType::IF}, {"return", TokenType::RETURN}, {"while", TokenType::WHILE},
         //Operators

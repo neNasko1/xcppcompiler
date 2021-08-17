@@ -40,7 +40,7 @@ void Parser::addTabIdentation(const int deltaTabs) {
 std::string Parser::getTabIdentation() {
     std::string ret = "";
     for(int i = 0; i < Parser::tabIdentation; i ++) {
-        ret += "  ";
+        ret += ".  ";
     }
     return ret;
 }
@@ -130,18 +130,26 @@ Expression *Parser::recogniseExpression() {
     int cntL_PAREN = 0; 
 
     while(true) {
+        if(this->isAtEnd()) {
+            std::cerr << "Unexpected EOF, while parsing expression" << std::endl;
+            ParserError(LINE());
+        }
         auto currentToken = this->peek();
+
         if(isSeparatorToken(currentToken)) {
             // Note codePtr shouldn't be advanced
             break;
         }
+
         this->advance();
+
         if(precedence[(int)currentToken.type] != -1) {
             if(canBeUnary && canBeUnaryOperator(currentToken)) {
                 // We can and have to transform this operator token to its matching unary token
                 transformToMatchingUnary(currentToken);
             }
 
+            // We pop all operators with precedence less than the current
             while(!opStack.empty() && opStack.top().type != TokenType::L_PAREN
                 && ((precedence[opStack.top().type] < precedence[currentToken.type]) 
                 || (precedence[opStack.top().type] == precedence[currentToken.type] 
@@ -150,56 +158,76 @@ Expression *Parser::recogniseExpression() {
             } 
             opStack.push(currentToken);
 
+            // After a unary operator we can have another one, e.g. --x
             canBeUnary = true;
-            continue;
+
+            // We have to continue, so we dont make canBeUnary to false;
+            continue; 
         } else if(currentToken.type == TokenType::L_PAREN) {
             opStack.push(currentToken);
+        
+            // Number of nested L_PARENs should increase
             cntL_PAREN ++;
 
+            // After a L_PAREN an unary operator can follow
             canBeUnary = true;
-            continue; // We have to continue, so we dont make canBeUnary to false;
+
+            // We have to continue, so we dont make canBeUnary to false;
+            continue; 
         } else if(currentToken.type == TokenType::R_PAREN) {
             if(cntL_PAREN == 0) { // Same as separator case
                 // This has to be a function call R_PAREN, so we should break
                 this->codePtr --;
                 break;
             }
+
+            // Pop top of operation stack while we haven't found the matching L_PAREN
             while(!opStack.empty() && opStack.top().type != TokenType::L_PAREN) {
                 this->combineTop(expStack, opStack);
             }
+
             if(opStack.empty()) {
                 std::cerr << "No matching left paranthesis " << std::endl;
                 ParserError(LINE());
             }  
 
             opStack.pop();
+            
+            // Number of nested L_PARENs should decrease
             cntL_PAREN --;
         } else if(currentToken.type >= TokenType::CHARACTER && currentToken.type < TokenType::STRING) {
             expStack.push(new LiteralExpression(currentToken));
         } else if(currentToken.type == TokenType::NAME) {
-            // If this is a function call;
             if(!this->isAtEnd() && this->peek().type == TokenType::L_PAREN) {
+                // If this is a function call;
                 this->codePtr --;
                 Expression *now = this->recogniseFunctionCall();
                 expStack.push(now);
             } else {
+                // Else if it is a variable name
                 expStack.push(new LiteralExpression(currentToken));
             }
         } else {
             std::cerr << "Unexpected token in expression parsing: " << currentToken.type << std::endl;
             ParserError(LINE());
         }
+
+        // Next operator cannot be unary
         canBeUnary = false;
     }
 
+    // Pop all operations from the stack
     while(!opStack.empty()) {
         this->combineTop(expStack, opStack);
     }
+    
     if(expStack.size() > 1) {
+        // If there are too many expressions in the stack
         std::cerr << "Not enough operators in stack." << std::endl;
         ParserError(LINE()); 
     }
     if(expStack.size() == 0) {
+        // If there is no expression in the stack
         std::cerr << "Empty expression." << std::endl;
         ParserError(LINE());
     }
@@ -214,4 +242,55 @@ bool isStartOfExpression(const Token &token) {
     return (token.type >= TokenType::CHARACTER && token.type <= TokenType::NAME) 
     || token.type == TokenType::L_PAREN 
     || canBeUnaryOperator(token); // Token is an unary operator;
+}
+
+Statement *Parser::recogniseExpressionStatement() {
+    Expression *expr = this->recogniseExpression();
+    if(this->isAtEnd()) {
+        std::cerr << "Unexpected EOF, when expecting ;" << std::endl;
+        ParserError(LINE());
+    } else if(this->peek().type != TokenType::SEMICOLON) {
+        std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl;
+        std::cerr << "when expecting ;" << std::endl; 
+        ParserError(LINE());
+    }
+    // Next token is ;
+    this->advance();
+
+    return new ExpressionStatement(expr);
+}
+
+Statement *Parser::recogniseStatementList() {
+    if(this->isAtEnd()) {
+        std::cerr << "Unexpected EOF, when expecting {" << std::endl;
+        ParserError(LINE());
+    } else if(this->peek().type != TokenType::L_BRACE) {
+        std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl;
+        std::cerr << "when expecting {" << std::endl; 
+        ParserError(LINE());
+    }
+    // Next token is {
+    this->advance();
+
+    std::vector<Statement*> list;
+
+    while(true) {
+        if(this->isAtEnd()) {
+            std::cerr << "Unexpected EOF, while parsing statement list" << std::endl;
+            ParserError(LINE());
+        }
+        Token currentToken = this->peek();
+        if(currentToken.type == TokenType::R_BRACE) {
+            break;
+        } else if(!isStartOfExpression(currentToken)) {
+            std::cerr << "Unexpected token " << std::endl << currentToken << std::endl;
+            std::cerr << "while expecting start of expression" << std::endl;
+            ParserError(LINE());
+        } else {
+            // We need to recognise the expression
+            list.push_back(this->recogniseExpressionStatement());
+        }
+    }
+
+    return new StatementList(list);
 }
