@@ -114,7 +114,6 @@ std::ostream& ExpressionStatement::hiddenPrint(std::ostream &os) const {
 
 StatementList::StatementList(const std::vector<Statement*> &_list) : list(_list) {}
 StatementList::~StatementList() {}
-
 std::ostream &StatementList::hiddenPrint(std::ostream &os) const {
     os << Parser::getTabIdentation();
     os << "Statement list { " << std::endl;
@@ -132,4 +131,3 @@ std::ostream &StatementList::hiddenPrint(std::ostream &os) const {
     os << "}";
     return os;    
 }
-

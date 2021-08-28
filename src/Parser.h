@@ -24,7 +24,6 @@ class Expression;
 class Parser {
 //private:
 public:
-    
     /**
      * @brief Tokens to parse
      * 
@@ -57,7 +56,7 @@ public:
      * @param type Type to match
      * @return true if the parser pointer advanced and false otherwise
      */
-    bool match(const TokenType &type);
+    bool match(const TokenType type);
 
     /**
      * @brief Check if codePtr is at the end of the input code
@@ -77,30 +76,37 @@ public:
     /**
      * @brief Recognize expression starting from the parser pointer
      * 
-     * @return Expression* 
+     * @return Expression* Recognized expression
      */
-    Expression *recogniseExpression();
+    Expression *recognizeExpression();
 
     /**
      * @brief Recognize function call starting from the parser pointer
      * 
-     * @return Expression* 
+     * @return Expression* Recognized function call
      */
-    Expression *recogniseFunctionCall();
+    Expression *recognizeFunctionCall();
 
     /**
      * @brief Recognize expression statement starting from the parser pointer
      * 
      * @return Statement* Recognized statement
      */
-    Statement *recogniseExpressionStatement();
+    Statement *recognizeExpressionStatement();
+
+    /**
+     * @brief Recognize if statement starting from the parser pointer
+     * 
+     * @return Statement* Recognized if statement
+     */
+    Statement *recognizeIfStatement();
 
     /**
      * @brief Recognize statement list starting from the parser pointer starting with a L_BRACE and ending at a R_BRACE
      * 
      * @return Statement* Recognized statement list
      */
-    Statement *recogniseStatementList();
+    StatementList *recognizeStatementList();
 
 public:
     // TODO: move to a different location

@@ -271,7 +271,46 @@ public:
     ~ExpressionStatement();
 };
 
-class StatementList final : public Statement  {
+/**
+ * @brief Class representing an if statement
+ * 
+ */
+class IfStatement final : public Statement {
+private:
+    /**
+     * @brief Print contents of a statement recursively to std::ostream
+     * 
+     * @param os Stream to output to
+     * @return std::ostream&  Modified stream
+     */
+    std::ostream& hiddenPrint(std::ostream &os) const;
+public:
+
+    /**
+     * @brief Condition to check before executing if-body or else-body
+     * 
+     */
+    Expression *condition;
+
+    /**
+     * @brief If-body
+     * 
+     */
+    Statement *ifBody; 
+
+    /**
+     * @brief Else-body
+     * 
+     */
+    Statement *elseBody;
+    //note this can be an if statement, representing elif chains
+};
+
+/**
+ * @brief Class representing a list of statements
+ * 
+ */
+class StatementList final : public Statement {
 private:
     /**
      * @brief Print contents of a statement list recursively to std::ostream

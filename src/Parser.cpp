@@ -21,7 +21,7 @@ Token Parser::peek() const {
 Token Parser::advance() {
     return this->tokens[this->codePtr ++];
 }
-bool Parser::match(const TokenType &type) {
+bool Parser::match(const TokenType type) {
     if(this->tokens[this->codePtr].type == type) {
         this->codePtr ++;
         return true;
@@ -45,7 +45,7 @@ std::string Parser::getTabIdentation() {
     return ret;
 }
 
-Expression *Parser::recogniseFunctionCall() {
+Expression *Parser::recognizeFunctionCall() {
     std::vector<Expression*> parameters;
     // We know that the next character is a name;
     std::string name = this->advance().lexeme;
@@ -64,7 +64,7 @@ Expression *Parser::recogniseFunctionCall() {
             std::cerr << currentToken << std::endl;
             ParserError(LINE());
         } else /*Start of expression*/ {
-            parameters.push_back(this->recogniseExpression());
+            parameters.push_back(this->recognizeExpression());
             if(this->isAtEnd()) {
                 std::cerr << "Unexpected end of input" << std::endl;
                 ParserError(LINE());
@@ -123,7 +123,7 @@ void Parser::combineTop(std::stack<Expression* > &expStack, std::stack<Token> &o
     }
 }
 
-Expression *Parser::recogniseExpression() { 
+Expression *Parser::recognizeExpression() { 
     std::stack<Expression*> expStack; 
     std::stack<Token> opStack; 
     bool canBeUnary = true;
@@ -201,7 +201,7 @@ Expression *Parser::recogniseExpression() {
             if(!this->isAtEnd() && this->peek().type == TokenType::L_PAREN) {
                 // If this is a function call;
                 this->codePtr --;
-                Expression *now = this->recogniseFunctionCall();
+                Expression *now = this->recognizeFunctionCall();
                 expStack.push(now);
             } else {
                 // Else if it is a variable name
@@ -234,18 +234,8 @@ Expression *Parser::recogniseExpression() {
     return expStack.top();
 }
 
-bool isSeparatorToken(const Token &token) {
-    return token.type >= TokenType::COMMA && token.type <= TokenType::QUESTION_MARK;
-}
-
-bool isStartOfExpression(const Token &token) {
-    return (token.type >= TokenType::CHARACTER && token.type <= TokenType::NAME) 
-    || token.type == TokenType::L_PAREN 
-    || canBeUnaryOperator(token); // Token is an unary operator;
-}
-
-Statement *Parser::recogniseExpressionStatement() {
-    Expression *expr = this->recogniseExpression();
+Statement *Parser::recognizeExpressionStatement() {
+    Expression *expr = this->recognizeExpression();
     if(this->isAtEnd()) {
         std::cerr << "Unexpected EOF, when expecting ;" << std::endl;
         ParserError(LINE());
@@ -260,17 +250,15 @@ Statement *Parser::recogniseExpressionStatement() {
     return new ExpressionStatement(expr);
 }
 
-Statement *Parser::recogniseStatementList() {
+StatementList *Parser::recognizeStatementList() {
     if(this->isAtEnd()) {
         std::cerr << "Unexpected EOF, when expecting {" << std::endl;
         ParserError(LINE());
-    } else if(this->peek().type != TokenType::L_BRACE) {
+    } else if(!this->match(TokenType::L_BRACE)) {
         std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl;
         std::cerr << "when expecting {" << std::endl; 
         ParserError(LINE());
     }
-    // Next token is {
-    this->advance();
 
     std::vector<Statement*> list;
 
@@ -287,10 +275,21 @@ Statement *Parser::recogniseStatementList() {
             std::cerr << "while expecting start of expression" << std::endl;
             ParserError(LINE());
         } else {
-            // We need to recognise the expression
-            list.push_back(this->recogniseExpressionStatement());
+            // We need to recognize recognizethe expression
+            list.push_back(this->recognizeExpressionStatement());
         }
     }
 
     return new StatementList(list);
+}
+
+
+bool isSeparatorToken(const Token &token) {
+    return token.type >= TokenType::COMMA && token.type <= TokenType::QUESTION_MARK;
+}
+
+bool isStartOfExpression(const Token &token) {
+    return (token.type >= TokenType::CHARACTER && token.type <= TokenType::NAME) 
+    || token.type == TokenType::L_PAREN 
+    || canBeUnaryOperator(token); // Token is an unary operator;
 }
