@@ -1,33 +1,42 @@
-1.Memory leaks all over the place: 
-	All programming language classes include memoryleaks in the form of empty destructor.
+1. Lexing using some type of trie
 
-2.Ifelse statement parsing
+2. Expression parsing
 
-3.Declaration parsing
+3. Precedence, associativity and unary operators parsing 
 
-4.Function definition parsing
+4. Function call parsing
 
-5.Different types of expressions
+5. Statement list parsing
 
-6.BACKEND:
+6.Ifelse statement parsing
+
+// Currently here
+
+7.Declaration parsing
+
+8.Function definition parsing
+
+9.Static expression typing
+
+10.BACKEND:
 	-Expression code generation
 	-Statement list code generation
 	-Function definition and calling code generation
 
-7.For statement parsing
+11.For statement parsing
 
-7.Different data types
+12.Different data types
 
-8.Print statement intrinsics
+13.Print statement intrinsics
 
-9.Class definition parsing
+14.Class definition parsing
 
-10.Class initialization parsing
+15.Class initialization parsing
 
-11.Static memory allocation
+16.Static memory allocation
 
-12.Dynamic memory allocation
+17.Dynamic memory allocation
 
-13.Real dynamic typing 
+18.Real dynamic typing 
 
-14.Real tools for debugging like real error messages.
+19.Real tools for debugging like real error messages.
