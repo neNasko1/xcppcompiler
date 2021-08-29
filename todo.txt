@@ -11,6 +11,7 @@
 6.Ifelse statement parsing
 
 // Currently here
+// Optional 6.5 - add a script which will test the code automatically
 
 7.Declaration parsing
 
