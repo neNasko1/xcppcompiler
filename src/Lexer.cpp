@@ -214,29 +214,31 @@ Token Lexer::recognizeChar() {
 void Lexer::lex() {
     this->lexed.resize(0);
     while(!this->isAtEnd()) {
-        char current = this->peek(); int startPos = this->charNmb;
+        char currentChar = this->peek(); int startPos = this->charNmb;
+
         Token currentToken;
-        if(isWhitespace(current)) {
+        if(isWhitespace(currentChar)) {
             this->advance();
             continue;
-        } if(isOperator(current) || isSeparator(current) || isBracket(current)) {
+        } if(isOperator(currentChar) || isSeparator(currentChar) || isBracket(currentChar)) {
             currentToken = this->recognizeOperator();
-        } else if(isDigit(current)) {
+        } else if(isDigit(currentChar)) {
             currentToken = this->recognizeNumber();
-        } else if(isLetter(current)) {
+        } else if(isLetter(currentChar)) {
             currentToken = this->recognizeWord();
-        } else if(current == '"') {
+        } else if(currentChar == '"') {
             currentToken = this->recognizeString();
-        } else if(current == '\'') {
+        } else if(currentChar == '\'') {
             currentToken = this->recognizeChar();
         } else {
-            std::cerr << "Parsing error: Found character " << current << " at " << this->lineNmb << " " << this->charNmb << std::endl;
+            std::cerr << "Lexing error: Found character " << currentChar << " at " << this->lineNmb << " " << this->charNmb << std::endl;
             LexerError(LINE());
         }
         currentToken.lineNmb = this->lineNmb;
         currentToken.startPos = startPos;
         this->lexed.push_back(currentToken);
     }
+    this->lexed.push_back(Token(TokenType::END_OF_FILE, "", -1, -1));
 }
 
 void Lexer::printLexed() const {
@@ -260,7 +262,7 @@ void setupLexer(Lexer &lexer) {
         {"|=", TokenType::OR_EQUAL}, {"&=", TokenType::AND_EQUAL}, {"^=", TokenType::XOR_EQUAL}, {"=", TokenType::EQUAL}, //'Nonconstant' operators
         //Boolean operators
         {"!", TokenType::BANG}, {"!", TokenType::BANG_EQUAL}, {"==", TokenType::EQUAL_EQUAL}, {"<", TokenType::LESS}, {"<=", TokenType::LESS_EQUAL},
-        {"<", TokenType::GREATER}, {"<=", TokenType::GREATER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR}, {",", TokenType::COMMA},
+        {">", TokenType::GREATER}, {">=", TokenType::GREATER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR}, {",", TokenType::COMMA},
         //Separators
         {";", TokenType::SEMICOLON}, {".", TokenType::DOT}, {":", TokenType::COLON}, {"?", TokenType::COLON},
         //Brackets

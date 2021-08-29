@@ -51,12 +51,20 @@ public:
     Token advance();
     
     /**
-     * @brief If current token matches the given type advance 
+     * @brief Advance current token matches the given type 
      * 
-     * @param type Type to match
+     * @param type Type to match agains
      * @return true if the parser pointer advanced and false otherwise
      */
     bool match(const TokenType type);
+
+    /**
+     * @brief Advance if current token matches the given type exit with parser error otherwise
+     * 
+     * @param type Type to match agains
+     * @return true If there was no parsing error
+     */
+    bool hardMatch(const TokenType type);
 
     /**
      * @brief Check if codePtr is at the end of the input code

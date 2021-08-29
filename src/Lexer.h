@@ -30,6 +30,7 @@ enum TokenType {
     L_BRACE, R_BRACE, L_PAREN, R_PAREN, L_SQUARE_BRACKET, R_SQUARE_BRACKET,
     //Literals
     CHARACTER, NUMBER, BOOLEAN, STRING, NAME,
+    END_OF_FILE,
     size
 };
 
@@ -45,7 +46,8 @@ const std::string TokenTypeName[TokenType::size] = {
     "unary +", "unary -", "unary &", "unary *",
     ",", ";", ".", ":", "?",
     "{", "}", "(", ")", "[", "]",
-    "character", "number", "boolean", "string", "name"
+    "character", "number", "boolean", "string", "name",
+    "EOF"
 };
 
 /**
@@ -59,10 +61,11 @@ const int precedence[TokenType::size] = {
     12, 12, 10, 10, 10, 26, 22, 24, 7,
     35, 35, 35, 35, 35, 35, 35, 35, 35,
     7, 20, 20, 18, 18, 18, 18, 32, 28, 30,
-    7, 7, 7, 7, // ??? SUSSY
+    7, 7, 7, 7, // ??? Not sure
     -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1
+    -1, -1, -1, -1, -1,
+    -1,
 };
 
 /**

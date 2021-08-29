@@ -5,6 +5,13 @@
 #include "Grammar.h"
 #include "Parser.h"
 
+#define HARD_MATCH(tokenType) \
+    if(!this->match(tokenType)) { \
+        std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl; \
+        std::cerr << "when expecting " << TokenTypeName[tokenType] << std::endl; \
+        ParserError(LINE()); \
+    }
+
 void ParserError(int line) {
     std::cerr << "Parser error at " << line << std::endl;
     exit(0);
@@ -29,8 +36,10 @@ bool Parser::match(const TokenType type) {
         return false;
     }
 }
+//TODO: Add hardmatch function or macro
+
 bool Parser::isAtEnd() const {
-    return this->codePtr >= this->tokens.size();
+    return this->peek().type == TokenType::END_OF_FILE;
 }
 
 void Parser::addTabIdentation(const int deltaTabs) {
@@ -40,7 +49,7 @@ void Parser::addTabIdentation(const int deltaTabs) {
 std::string Parser::getTabIdentation() {
     std::string ret = "";
     for(int i = 0; i < Parser::tabIdentation; i ++) {
-        ret += ".  ";
+        ret += ",  ";
     }
     return ret;
 }
@@ -69,12 +78,10 @@ Expression *Parser::recognizeFunctionCall() {
                 std::cerr << "Unexpected end of input" << std::endl;
                 ParserError(LINE());
             }
-            if(this->peek().type == TokenType::COMMA) {
-                this->advance();
+            if(this->match(TokenType::COMMA)) {
                 // Everything is okay, we are expecting the next expression
                 continue;
-            } else if(this->peek().type == TokenType::R_PAREN) {
-                this->advance();
+            } else if(this->match(TokenType::R_PAREN)) {
                 // We have found the end of function call parsing.
                 break;
             } else {
@@ -236,29 +243,35 @@ Expression *Parser::recognizeExpression() {
 
 Statement *Parser::recognizeExpressionStatement() {
     Expression *expr = this->recognizeExpression();
-    if(this->isAtEnd()) {
-        std::cerr << "Unexpected EOF, when expecting ;" << std::endl;
-        ParserError(LINE());
-    } else if(this->peek().type != TokenType::SEMICOLON) {
-        std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl;
-        std::cerr << "when expecting ;" << std::endl; 
-        ParserError(LINE());
-    }
-    // Next token is ;
-    this->advance();
+
+    HARD_MATCH(TokenType::SEMICOLON);
 
     return new ExpressionStatement(expr);
 }
 
-StatementList *Parser::recognizeStatementList() {
-    if(this->isAtEnd()) {
-        std::cerr << "Unexpected EOF, when expecting {" << std::endl;
-        ParserError(LINE());
-    } else if(!this->match(TokenType::L_BRACE)) {
-        std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl;
-        std::cerr << "when expecting {" << std::endl; 
-        ParserError(LINE());
+Statement *Parser::recognizeIfStatement() {
+    HARD_MATCH(TokenType::IF);
+    HARD_MATCH(TokenType::L_PAREN);    
+    // Recognize condition
+    Expression *condition = this->recognizeExpression();
+    HARD_MATCH(TokenType::R_PAREN); 
+    // Recognize if-body
+    Statement *ifBody = this->recognizeStatementList();
+    Statement *elseBody = nullptr;
+
+    if(this->match(TokenType::ELSE)) {
+        if(this->peek().type == TokenType::IF) {
+            elseBody = this->recognizeIfStatement();
+        } else {
+            elseBody = this->recognizeStatementList();
+        }
     }
+
+    return new IfStatement(condition, ifBody, elseBody);
+}
+
+StatementList *Parser::recognizeStatementList() {
+    HARD_MATCH(TokenType::L_BRACE);
 
     std::vector<Statement*> list;
 
@@ -268,21 +281,26 @@ StatementList *Parser::recognizeStatementList() {
             ParserError(LINE());
         }
         Token currentToken = this->peek();
-        if(currentToken.type == TokenType::R_BRACE) {
+
+        if(this->match(TokenType::R_BRACE)) {
+            // If we can match } we should exit and advance
             break;
+        } else if(currentToken.type == TokenType::IF) {
+            // We have to recognize if
+            list.push_back(this->recognizeIfStatement());
         } else if(!isStartOfExpression(currentToken)) {
+            // We are expecting an expression, but this is not the start of one
             std::cerr << "Unexpected token " << std::endl << currentToken << std::endl;
             std::cerr << "while expecting start of expression" << std::endl;
             ParserError(LINE());
         } else {
-            // We need to recognize recognizethe expression
+            // We need to recognize the expression
             list.push_back(this->recognizeExpressionStatement());
         }
     }
 
     return new StatementList(list);
 }
-
 
 bool isSeparatorToken(const Token &token) {
     return token.type >= TokenType::COMMA && token.type <= TokenType::QUESTION_MARK;
