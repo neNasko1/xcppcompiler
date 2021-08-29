@@ -298,12 +298,23 @@ public:
      */
     Statement *ifBody; 
 
+    //note this can be an if statement, representing elif chains
     /**
      * @brief Else-body
      * 
      */
     Statement *elseBody;
-    //note this can be an if statement, representing elif chains
+
+    /**
+     * @brief Construct a new If Statement object
+     * 
+     * @param condition Condition to check before executing if-body or else-body
+     * @param ifBody If-body
+     * @param elseBody Else-body
+     */
+    IfStatement(Expression *condition, Statement *ifBody, Statement *elseBody);
+
+    ~IfStatement();
 };
 
 /**

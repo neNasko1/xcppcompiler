@@ -131,3 +131,30 @@ std::ostream &StatementList::hiddenPrint(std::ostream &os) const {
     os << "}";
     return os;    
 }
+
+IfStatement::IfStatement(Expression *condition, Statement *ifBody, Statement *elseBody) 
+        : condition(condition), ifBody(ifBody), elseBody(elseBody) {}
+IfStatement::~IfStatement() {}
+std::ostream &IfStatement::hiddenPrint(std::ostream &os) const {
+    os << Parser::getTabIdentation();
+    os << "If statement { " << std::endl;
+
+    os << "Condition :" << std::endl;
+    Parser::addTabIdentation(+1);
+    os << *(this->condition) << std::endl;
+    Parser::addTabIdentation(-1);
+
+    os << "If body :" << std::endl;
+    Parser::addTabIdentation(+1);
+    os << *(this->ifBody) << std::endl;
+    Parser::addTabIdentation(-1);
+
+    os << "Else body :" << std::endl;
+    Parser::addTabIdentation(+1);
+    os << *(this->elseBody) << std::endl;
+    Parser::addTabIdentation(-1);
+
+    os << Parser::getTabIdentation();
+    os << "}";
+    return os;    
+}
