@@ -1,0 +1,13 @@
+{
+{
+
+if a < 10 {
+	print(10);
+} else do print(121);
+
+if b > 10 do print(150); else print(121);
+
+		
+}
+
+}

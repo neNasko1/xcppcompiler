@@ -140,7 +140,7 @@ Grammar::Expression *Parser::recognizeExpression() {
         }
         auto currentToken = this->peek();
 
-        if(isSeparatorToken(currentToken) || currentToken.type == Lexing::TokenType::L_BRACE) {
+        if(isEndOfExpression(currentToken)) {
             // Note codePtr shouldn't be advanced
             break;
         }
@@ -251,17 +251,17 @@ Grammar::Statement *Parser::recognizeIfStatement() {
     Grammar::Statement *elseBody = nullptr;
 
     if(this->match(Lexing::TokenType::ELSE)) {
-        if(this->peek().type == Lexing::TokenType::IF) {
-            elseBody = this->recognizeIfStatement();
-        } else {
-            elseBody = this->recognizeStatementList();
-        }
+        elseBody = this->recognizeStatement();
     }
 
     return new Grammar::IfStatement(condition, ifBody, elseBody);
 }
 
-Grammar::StatementList *Parser::recognizeStatementList() {
+Grammar::Statement *Parser::recognizeStatementList() {
+    if(this->match(Lexing::TokenType::DO)) {
+        return new Grammar::StatementList({this->recognizeStatement()});
+    }
+
     HARD_MATCH(Lexing::TokenType::L_BRACE);
 
     std::vector<Grammar::Statement*> list;
@@ -275,19 +275,35 @@ Grammar::StatementList *Parser::recognizeStatementList() {
         if(this->match(Lexing::TokenType::R_BRACE)) {
             // If we can match } we should exit and advance
             break;
-        } else if(currentToken.type == Lexing::TokenType::IF) {
-            // We have to recognize if
-            list.push_back(this->recognizeIfStatement());
-        } else if(!isStartOfExpression(currentToken)) {
-            // We are expecting an expression, but this is not the start of one
-            ParserError("Unexpected token \n", currentToken, "\n while expecting start of expression \n");
         } else {
-            // We need to recognize the expression
-            list.push_back(this->recognizeExpressionStatement());
+            list.push_back(this->recognizeStatement());
         }
     }
 
     return new Grammar::StatementList(list);
+}
+
+Grammar::Statement *Parser::recognizeStatement() {
+    if(this->isAtEnd()) {
+        ParserError("Unexpected EOF, while parsing statement \n");
+    }
+    Lexing::Token currentToken = this->peek();
+    if(currentToken.type == Lexing::TokenType::IF) {
+        // We have to recognize if
+        return this->recognizeIfStatement();
+    } else if(isStartOfStatementList(currentToken)) {
+        return this->recognizeStatementList();
+    } else {
+        if(!isStartOfExpression(currentToken)) {
+            // We are expecting an expression, but this is not the start of one
+            ParserError("Unexpected token \n", currentToken, "\n while expecting start of expression \n");
+            return nullptr;
+        } else {
+            // We need to recognize the expression
+            return this->recognizeExpressionStatement();
+        }
+    }
+    return nullptr;
 }
 
 bool isSeparatorToken(const Lexing::Token &token) {
@@ -298,6 +314,14 @@ bool isStartOfExpression(const Lexing::Token &token) {
     return (token.type >= Lexing::TokenType::CHARACTER && token.type <= Lexing::TokenType::NAME) 
     || token.type == Lexing::TokenType::L_PAREN 
     || canBeUnaryOperator(token); // Lexing::Token is an unary operator;
+}
+
+bool isEndOfExpression(const Lexing::Token &token) {
+    return isSeparatorToken(token) || token.type == Lexing::TokenType::L_BRACE || token.type == Lexing::TokenType::DO;
+}
+
+bool isStartOfStatementList(const Lexing::Token &token) {
+    return token.type == Lexing::TokenType::DO || token.type == Lexing::TokenType::L_BRACE;
 }
 
 };

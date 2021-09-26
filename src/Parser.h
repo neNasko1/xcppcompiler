@@ -115,7 +115,14 @@ public:
      * 
      * @return Grammar::Statement* Recognized statement list
      */
-    Grammar::StatementList *recognizeStatementList();
+    Grammar::Statement *recognizeStatementList();
+
+    /**
+     * @brief Recognize statement - this is the general statement recognition
+     *  
+     * @return Grammar::Statement* Recognized final statement
+     */
+    Grammar::Statement *recognizeStatement();
 
 public:
     // TODO: move to a different location
@@ -168,6 +175,22 @@ bool isStartOfExpression(const Lexing::Token &token);
  * @return true if token can be start of an expression and false otherwise
  */
 bool isSeparatorToken(const Lexing::Token &token);
+
+/**
+ * @brief 
+ * 
+ * @param token 
+ * @return true if token can be end of an expression and false otherwise
+ */
+bool isEndOfExpression(const Lexing::Token &token);
+
+/**
+ * @brief 
+ * 
+ * @param token 
+ * @return true if token can be start of an statementlist and false otherwise
+ */
+bool isStartOfStatementList(const Lexing::Token &token);
 
 };
 

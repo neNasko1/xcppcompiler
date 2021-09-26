@@ -18,7 +18,7 @@ namespace Lexing {
 const int ASCII_SIZE = 256;
 enum TokenType {
     //Keywords
-    ELSE, FUNCTION, FOR, IF, RETURN, VAR, WHILE,
+    ELSE, FUNCTION, FOR, IF, RETURN, VAR, WHILE, DO,
     //Operators
     PLUS, MINUS, STAR, SLASH, MODULO, OR, AND, XOR, NOT,
     PLUS_EQUAL, MINUS_EQUAL, STAR_EQUAL, SLASH_EQUAL, MODULO_EQUAL, OR_EQUAL, AND_EQUAL, XOR_EQUAL, EQUAL,
@@ -41,7 +41,7 @@ enum TokenType {
  * 
  */
 const std::string TokenTypeName[TokenType::size] = {
-    "else", "function", "for", "if", "return", "var", "while",
+    "else", "function", "for", "if", "return", "var", "while", "do",
     "+", "-", "*", "/", "%", "|", "&", "^", "~",
     "+=", "-=", "*=", "/=", "%=", "|=", "&=", "^=", "=",
     "!", "!=", "==", "<", "<=", ">", ">=", "||", "&&", "^^",
@@ -59,7 +59,7 @@ const std::string TokenTypeName[TokenType::size] = {
  * 
  */
 const int precedence[TokenType::size] = {
-    -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1,
     12, 12, 10, 10, 10, 26, 22, 24, 7,
     35, 35, 35, 35, 35, 35, 35, 35, 35,
     7, 20, 20, 18, 18, 18, 18, 32, 28, 30,
