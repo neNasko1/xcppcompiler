@@ -1,4 +1,4 @@
-g++ src/*.cpp main.cpp -o cnas_compiler
+g++ src/*.cpp main.cpp -o compiler
 
-echo "Compiler was compiled"
+echo "Compiler was compiled succesfully"
 

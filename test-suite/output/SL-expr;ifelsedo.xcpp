@@ -1,0 +1,50 @@
+Statement list { 
+,  Statement list { 
+,  ,  If statement { 
+,  ,  >Condition :
+,  ,  ,  Binary expression {
+,  ,  ,  ,  a
+,  ,  ,  ,  <
+,  ,  ,  ,  10
+,  ,  ,  }
+,  ,  >If-body :
+,  ,  ,  Statement list { 
+,  ,  ,  ,  Expression statement { 
+,  ,  ,  ,  ,  Function call print {
+,  ,  ,  ,  ,  ,  10
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  >Else body :
+,  ,  ,  Statement list { 
+,  ,  ,  ,  Expression statement { 
+,  ,  ,  ,  ,  Function call print {
+,  ,  ,  ,  ,  ,  121
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  ,  If statement { 
+,  ,  >Condition :
+,  ,  ,  Binary expression {
+,  ,  ,  ,  b
+,  ,  ,  ,  >
+,  ,  ,  ,  10
+,  ,  ,  }
+,  ,  >If-body :
+,  ,  ,  Statement list { 
+,  ,  ,  ,  Expression statement { 
+,  ,  ,  ,  ,  Function call print {
+,  ,  ,  ,  ,  ,  150
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  >Else body :
+,  ,  ,  Expression statement { 
+,  ,  ,  ,  Function call print {
+,  ,  ,  ,  ,  121
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+}

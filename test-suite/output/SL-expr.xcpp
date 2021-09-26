@@ -1,0 +1,189 @@
+Statement list { 
+,  Expression statement { 
+,  ,  Function call print {
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  10
+,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  20
+,  ,  ,  ,  }
+,  ,  ,  ,  -
+,  ,  ,  ,  Function call f {
+,  ,  ,  ,  ,  3
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+,  Expression statement { 
+,  ,  Binary expression {
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  ,  10
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  20
+,  ,  ,  ,  }
+,  ,  ,  ,  -
+,  ,  ,  ,  30
+,  ,  ,  }
+,  ,  ,  &
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  50
+,  ,  ,  ,  ,  /
+,  ,  ,  ,  ,  10
+,  ,  ,  ,  }
+,  ,  ,  ,  +
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  x
+,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  y
+,  ,  ,  ,  ,  ,  *
+,  ,  ,  ,  ,  ,  z
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+,  Expression statement { 
+,  ,  Binary expression {
+,  ,  ,  a
+,  ,  ,  =
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Function call func {
+,  ,  ,  ,  ,  1
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  2
+,  ,  ,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  ,  ,  3
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  -
+,  ,  ,  ,  ,  ,  4
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  5
+,  ,  ,  ,  ,  ,  ,  *
+,  ,  ,  ,  ,  ,  ,  2
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  -
+,  ,  ,  ,  ,  ,  1
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  Function call func2 {
+,  ,  ,  ,  ,  ,  10
+,  ,  ,  ,  ,  ,  20
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  ,  *
+,  ,  ,  ,  Function call f3 {
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+,  Expression statement { 
+,  ,  Binary expression {
+,  ,  ,  a
+,  ,  ,  =
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  ,  Unary expression {
+,  ,  ,  ,  ,  ,  ,  unary -
+,  ,  ,  ,  ,  ,  ,  5
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  Unary expression {
+,  ,  ,  ,  ,  ,  ,  ,  unary *
+,  ,  ,  ,  ,  ,  ,  ,  b
+,  ,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  ,  -
+,  ,  ,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  -
+,  ,  ,  ,  ,  ,  3
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  ,  +
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  7
+,  ,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  ,  3
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  -
+,  ,  ,  ,  ,  2
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+,  Expression statement { 
+,  ,  Binary expression {
+,  ,  ,  a
+,  ,  ,  =
+,  ,  ,  Binary expression {
+,  ,  ,  ,  b
+,  ,  ,  ,  =
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  c
+,  ,  ,  ,  ,  =
+,  ,  ,  ,  ,  Unary expression {
+,  ,  ,  ,  ,  ,  unary -
+,  ,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+,  Expression statement { 
+,  ,  Binary expression {
+,  ,  ,  a
+,  ,  ,  +=
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  1
+,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  3
+,  ,  ,  ,  }
+,  ,  ,  ,  -
+,  ,  ,  ,  2
+,  ,  ,  }
+,  ,  }
+,  }
+,  Expression statement { 
+,  ,  Binary expression {
+,  ,  ,  a
+,  ,  ,  =
+,  ,  ,  Binary expression {
+,  ,  ,  ,  b
+,  ,  ,  ,  =
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  c
+,  ,  ,  ,  ,  =
+,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  1
+,  ,  ,  ,  ,  ,  ^
+,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  2
+,  ,  ,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  ,  3
+,  ,  ,  ,  ,  ,  ,  ,  /
+,  ,  ,  ,  ,  ,  ,  ,  2
+,  ,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+}

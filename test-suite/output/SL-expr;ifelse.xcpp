@@ -1,0 +1,78 @@
+Statement list { 
+,  If statement { 
+,  >Condition :
+,  ,  Binary expression {
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Function call fizz {
+,  ,  ,  ,  ,  10
+,  ,  ,  ,  }
+,  ,  ,  ,  +
+,  ,  ,  ,  Function call buzz {
+,  ,  ,  ,  ,  150
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  ,  >=
+,  ,  ,  0
+,  ,  }
+,  >If-body :
+,  ,  Statement list { 
+,  ,  ,  If statement { 
+,  ,  ,  >Condition :
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  <
+,  ,  ,  ,  ,  Unary expression {
+,  ,  ,  ,  ,  ,  unary -
+,  ,  ,  ,  ,  ,  3
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  >If-body :
+,  ,  ,  ,  Statement list { 
+,  ,  ,  ,  ,  Expression statement { 
+,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  ,  ,  =
+,  ,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  ,  ,  ,  2
+,  ,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  Expression statement { 
+,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  b
+,  ,  ,  ,  ,  ,  ,  =
+,  ,  ,  ,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  ,  ,  ,  c
+,  ,  ,  ,  ,  ,  ,  ,  -
+,  ,  ,  ,  ,  ,  ,  ,  3
+,  ,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  ,  }
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  >Else body :
+,  ,  If statement { 
+,  ,  >Condition :
+,  ,  ,  Binary expression {
+,  ,  ,  ,  Binary expression {
+,  ,  ,  ,  ,  a
+,  ,  ,  ,  ,  +
+,  ,  ,  ,  ,  20
+,  ,  ,  ,  }
+,  ,  ,  ,  >
+,  ,  ,  ,  30
+,  ,  ,  }
+,  ,  >If-body :
+,  ,  ,  Statement list { 
+,  ,  ,  ,  Expression statement { 
+,  ,  ,  ,  ,  Function call print {
+,  ,  ,  ,  ,  ,  10
+,  ,  ,  ,  ,  }
+,  ,  ,  ,  }
+,  ,  ,  }
+,  ,  }
+,  }
+}
