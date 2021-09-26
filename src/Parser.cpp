@@ -5,30 +5,37 @@
 #include "Grammar.h"
 #include "Parser.h"
 
+namespace Parsing {
+
 #define HARD_MATCH(tokenType) \
     if(!this->match(tokenType)) { \
-        std::cerr << "Unexpected token " << std::endl << this->peek() << std::endl; \
-        std::cerr << "when expecting " << TokenTypeName[tokenType] << std::endl; \
-        ParserError(LINE()); \
+        ParserError("Unexpected token \n", this->peek(), "\n when expecting ", Lexing::TokenTypeName[tokenType], "\n"); \
     }
 
-void ParserError(int line) {
-    std::cerr << "Parser error at " << line << std::endl;
+template <typename... T> 
+void ParserErrorPrint(T... t) {
+    (std::cerr << ... << t) << "\n";
+}
+
+template <typename... T> 
+void ParserError(T... t) {
+    std::cerr << "There was an error while parsing " << "\n";
+    ParserErrorPrint(t...);
     exit(0);
 }
 
 int Parser::tabIdentation = 0;
 
-Parser::Parser(const std::vector<Token> &_tokens) : tokens(_tokens), codePtr(0) {}
+Parser::Parser(const std::vector<Lexing::Token> &_tokens) : tokens(_tokens), codePtr(0) {}
 Parser::~Parser() {}
 
-Token Parser::peek() const {
+Lexing::Token Parser::peek() const {
     return this->tokens[this->codePtr];
 }
-Token Parser::advance() {
+Lexing::Token Parser::advance() {
     return this->tokens[this->codePtr ++];
 }
-bool Parser::match(const TokenType type) {
+bool Parser::match(const Lexing::TokenType type) {
     if(this->tokens[this->codePtr].type == type) {
         this->codePtr ++;
         return true;
@@ -39,7 +46,7 @@ bool Parser::match(const TokenType type) {
 //TODO: Add hardmatch function or macro
 
 bool Parser::isAtEnd() const {
-    return this->peek().type == TokenType::END_OF_FILE;
+    return this->peek().type == Lexing::TokenType::END_OF_FILE;
 }
 
 void Parser::addTabIdentation(const int deltaTabs) {
@@ -54,113 +61,103 @@ std::string Parser::getTabIdentation() {
     return ret;
 }
 
-Expression *Parser::recognizeFunctionCall() {
-    std::vector<Expression*> parameters;
+Grammar::Expression *Parser::recognizeFunctionCall() {
+    std::vector<Grammar::Expression*> parameters;
     // We know that the next character is a name;
     std::string name = this->advance().lexeme;
 
-    this->match(TokenType::L_PAREN);
+    this->match(Lexing::TokenType::L_PAREN);
 
     while(true) {
         auto currentToken = this->peek();
 
-        if(currentToken.type == TokenType::R_PAREN) {
+        if(currentToken.type == Lexing::TokenType::R_PAREN) {
             this->advance();
             // We have found the end of function call parsing.
             break;
         } else if(!isStartOfExpression(currentToken)) {
-            std::cerr << "Unexpected token in function call parameter parsing" << std::endl;
-            std::cerr << currentToken << std::endl;
-            ParserError(LINE());
+            ParserError("Unexpected token in function call parameter parsing", "\n", currentToken, "\n");
         } else /*Start of expression*/ {
             parameters.push_back(this->recognizeExpression());
             if(this->isAtEnd()) {
-                std::cerr << "Unexpected end of input" << std::endl;
-                ParserError(LINE());
+                ParserError("Unexpected end of input", "\n");
             }
-            if(this->match(TokenType::COMMA)) {
+            if(this->match(Lexing::TokenType::COMMA)) {
                 // Everything is okay, we are expecting the next expression
                 continue;
-            } else if(this->match(TokenType::R_PAREN)) {
+            } else if(this->match(Lexing::TokenType::R_PAREN)) {
                 // We have found the end of function call parsing.
                 break;
             } else {
-                std::cerr << "Unexpected token in function call parameter separation" << std::endl << currentToken << std::endl;    
-                ParserError(LINE());
+                ParserError("Unexpected token in function call parameter separation: ", "\n", currentToken, "\n");
             }
         }
     }   
 
-    return new FunctionCall(name, parameters);
+    return new Grammar::FunctionCall(name, parameters);
 }
 
-void Parser::combineTop(std::stack<Expression* > &expStack, std::stack<Token> &opStack) const {
+void Parser::combineTop(std::stack<Grammar::Expression* > &expStack, std::stack<Lexing::Token> &opStack) const {
     if(expStack.size() < 2 && opStack.size() < 1) {
-        std::cerr << "Not enough operators and operands to combine expressions in AST " << std::endl;
-        ParserError(LINE());
+        ParserError("Not enough operators and operands to combine expressions in AST ", "\n");
     }
     if(opStack.size() < 1) {
-        std::cerr << "Not enough operators in stack" << std::endl;
-        ParserError(LINE());
+        ParserError("Not enough operators in stack", "\n");
     }
     auto op = opStack.top(); opStack.pop();
-    if(precedence[(int)op.type] == -1) {
-        std::cerr << "Trying to combine top with " << std::endl << op << std::endl;
-        ParserError(LINE());
+    if(Lexing::precedence[(int)op.type] == -1) {
+        ParserError("Trying to combine top with ", op, "\n");
     }
-    if(precedence[op.type] == 7) { // These are the unary operations TODO
+    if(Lexing::precedence[op.type] == 7) { // These are the unary operations TODO
         if(expStack.size() < 1) {
-            std::cerr << "Not enough operands for operator " << std::endl << op << std::endl;
-            ParserError(LINE());
+            ParserError("Not enough operands for operator ", "\n", op, "\n");
         }
-        Expression *exp;
+        Grammar::Expression *exp;
         exp = expStack.top(); expStack.pop();
-        Expression *now = new UnaryExpression(op.type, exp);                 
+        Grammar::Expression *now = new Grammar::UnaryExpression(op.type, exp);                 
         expStack.push(now);
     } else {
         if(expStack.size() < 2) {
-            std::cerr << "Not enough operands for operator " << std::endl << op << std::endl;
-            ParserError(LINE());
+            ParserError("Not enough operands for operator ", "\n", op, "\n");
         }
-        Expression *l, *r;
+        Grammar::Expression *l, *r;
         l = expStack.top(); expStack.pop();
         r = expStack.top(); expStack.pop();
-        Expression *now = new BinaryExpression(r, op.type, l);                 
+        Grammar::Expression *now = new Grammar::BinaryExpression(r, op.type, l);                 
         expStack.push(now);
     }
 }
 
-Expression *Parser::recognizeExpression() { 
-    std::stack<Expression*> expStack; 
-    std::stack<Token> opStack; 
+Grammar::Expression *Parser::recognizeExpression() { 
+    std::stack<Grammar::Expression*> expStack; 
+    std::stack<Lexing::Token> opStack; 
     bool canBeUnary = true;
     int cntL_PAREN = 0; 
 
     while(true) {
         if(this->isAtEnd()) {
-            std::cerr << "Unexpected EOF, while parsing expression" << std::endl;
-            ParserError(LINE());
+            ParserError("Unexpected EOF, while parsing expression", "\n");
         }
         auto currentToken = this->peek();
 
-        if(isSeparatorToken(currentToken)) {
+        if(isSeparatorToken(currentToken) || currentToken.type == Lexing::TokenType::L_BRACE) {
             // Note codePtr shouldn't be advanced
             break;
         }
 
         this->advance();
 
-        if(precedence[(int)currentToken.type] != -1) {
+        if(Lexing::precedence[(int)currentToken.type] != -1) {
             if(canBeUnary && canBeUnaryOperator(currentToken)) {
                 // We can and have to transform this operator token to its matching unary token
                 transformToMatchingUnary(currentToken);
             }
 
-            // We pop all operators with precedence less than the current
-            while(!opStack.empty() && opStack.top().type != TokenType::L_PAREN
-                && ((precedence[opStack.top().type] < precedence[currentToken.type]) 
-                || (precedence[opStack.top().type] == precedence[currentToken.type] 
-                    && precedence[currentToken.type] % 2 == 0))) { // Left associative
+            // We pop all operators with Lexing::precedence less than the current
+            while(!opStack.empty() && opStack.top().type != Lexing::TokenType::L_PAREN
+                && ((Lexing::precedence[opStack.top().type] < Lexing::precedence[currentToken.type]) 
+                || (Lexing::precedence[opStack.top().type] == Lexing::precedence[currentToken.type] 
+                    && Lexing::precedence[currentToken.type] % 2 == 0))) { // Left associative
                 this->combineTop(expStack, opStack);
             } 
             opStack.push(currentToken);
@@ -170,7 +167,7 @@ Expression *Parser::recognizeExpression() {
 
             // We have to continue, so we dont make canBeUnary to false;
             continue; 
-        } else if(currentToken.type == TokenType::L_PAREN) {
+        } else if(currentToken.type == Lexing::TokenType::L_PAREN) {
             opStack.push(currentToken);
         
             // Number of nested L_PARENs should increase
@@ -181,7 +178,7 @@ Expression *Parser::recognizeExpression() {
 
             // We have to continue, so we dont make canBeUnary to false;
             continue; 
-        } else if(currentToken.type == TokenType::R_PAREN) {
+        } else if(currentToken.type == Lexing::TokenType::R_PAREN) {
             if(cntL_PAREN == 0) { // Same as separator case
                 // This has to be a function call R_PAREN, so we should break
                 this->codePtr --;
@@ -189,34 +186,32 @@ Expression *Parser::recognizeExpression() {
             }
 
             // Pop top of operation stack while we haven't found the matching L_PAREN
-            while(!opStack.empty() && opStack.top().type != TokenType::L_PAREN) {
+            while(!opStack.empty() && opStack.top().type != Lexing::TokenType::L_PAREN) {
                 this->combineTop(expStack, opStack);
             }
 
             if(opStack.empty()) {
-                std::cerr << "No matching left paranthesis " << std::endl;
-                ParserError(LINE());
+                ParserError("No matching left paranthesis ", "\n");
             }  
 
             opStack.pop();
             
             // Number of nested L_PARENs should decrease
             cntL_PAREN --;
-        } else if(currentToken.type >= TokenType::CHARACTER && currentToken.type < TokenType::STRING) {
-            expStack.push(new LiteralExpression(currentToken));
-        } else if(currentToken.type == TokenType::NAME) {
-            if(!this->isAtEnd() && this->peek().type == TokenType::L_PAREN) {
+        } else if(currentToken.type >= Lexing::TokenType::CHARACTER && currentToken.type < Lexing::TokenType::STRING) {
+            expStack.push(new Grammar::LiteralExpression(currentToken));
+        } else if(currentToken.type == Lexing::TokenType::NAME) {
+            if(!this->isAtEnd() && this->peek().type == Lexing::TokenType::L_PAREN) {
                 // If this is a function call;
                 this->codePtr --;
-                Expression *now = this->recognizeFunctionCall();
+                Grammar::Expression *now = this->recognizeFunctionCall();
                 expStack.push(now);
             } else {
                 // Else if it is a variable name
-                expStack.push(new LiteralExpression(currentToken));
+                expStack.push(new Grammar::LiteralExpression(currentToken));
             }
         } else {
-            std::cerr << "Unexpected token in expression parsing: " << currentToken.type << std::endl;
-            ParserError(LINE());
+            ParserError("Unexpected token in expression parsing: ", Lexing::TokenTypeName[currentToken.type], "\n");
         }
 
         // Next operator cannot be unary
@@ -230,84 +225,79 @@ Expression *Parser::recognizeExpression() {
     
     if(expStack.size() > 1) {
         // If there are too many expressions in the stack
-        std::cerr << "Not enough operators in stack." << std::endl;
-        ParserError(LINE()); 
+        ParserError("Not enough operators in stack. \n"); 
     }
     if(expStack.size() == 0) {
         // If there is no expression in the stack
-        std::cerr << "Empty expression." << std::endl;
-        ParserError(LINE());
+        ParserError("Empty expression. \n");
     }
     return expStack.top();
 }
 
-Statement *Parser::recognizeExpressionStatement() {
-    Expression *expr = this->recognizeExpression();
+Grammar::Statement *Parser::recognizeExpressionStatement() {
+    Grammar::Expression *expr = this->recognizeExpression();
 
-    HARD_MATCH(TokenType::SEMICOLON);
+    HARD_MATCH(Lexing::TokenType::SEMICOLON);
 
-    return new ExpressionStatement(expr);
+    return new Grammar::ExpressionStatement(expr);
 }
 
-Statement *Parser::recognizeIfStatement() {
-    HARD_MATCH(TokenType::IF);
-    HARD_MATCH(TokenType::L_PAREN);    
+Grammar::Statement *Parser::recognizeIfStatement() {
+    HARD_MATCH(Lexing::TokenType::IF);
     // Recognize condition
-    Expression *condition = this->recognizeExpression();
-    HARD_MATCH(TokenType::R_PAREN); 
+    Grammar::Expression *condition = this->recognizeExpression();
     // Recognize if-body
-    Statement *ifBody = this->recognizeStatementList();
-    Statement *elseBody = nullptr;
+    Grammar::Statement *ifBody = this->recognizeStatementList();
+    Grammar::Statement *elseBody = nullptr;
 
-    if(this->match(TokenType::ELSE)) {
-        if(this->peek().type == TokenType::IF) {
+    if(this->match(Lexing::TokenType::ELSE)) {
+        if(this->peek().type == Lexing::TokenType::IF) {
             elseBody = this->recognizeIfStatement();
         } else {
             elseBody = this->recognizeStatementList();
         }
     }
 
-    return new IfStatement(condition, ifBody, elseBody);
+    return new Grammar::IfStatement(condition, ifBody, elseBody);
 }
 
-StatementList *Parser::recognizeStatementList() {
-    HARD_MATCH(TokenType::L_BRACE);
+Grammar::StatementList *Parser::recognizeStatementList() {
+    HARD_MATCH(Lexing::TokenType::L_BRACE);
 
-    std::vector<Statement*> list;
+    std::vector<Grammar::Statement*> list;
 
     while(true) {
         if(this->isAtEnd()) {
-            std::cerr << "Unexpected EOF, while parsing statement list" << std::endl;
-            ParserError(LINE());
+            ParserError("Unexpected EOF, while parsing statement list \n");
         }
-        Token currentToken = this->peek();
+        Lexing::Token currentToken = this->peek();
 
-        if(this->match(TokenType::R_BRACE)) {
+        if(this->match(Lexing::TokenType::R_BRACE)) {
             // If we can match } we should exit and advance
             break;
-        } else if(currentToken.type == TokenType::IF) {
+        } else if(currentToken.type == Lexing::TokenType::IF) {
             // We have to recognize if
             list.push_back(this->recognizeIfStatement());
         } else if(!isStartOfExpression(currentToken)) {
             // We are expecting an expression, but this is not the start of one
-            std::cerr << "Unexpected token " << std::endl << currentToken << std::endl;
-            std::cerr << "while expecting start of expression" << std::endl;
-            ParserError(LINE());
+            ParserError("Unexpected token \n", currentToken, "\n while expecting start of expression \n");
         } else {
             // We need to recognize the expression
             list.push_back(this->recognizeExpressionStatement());
         }
     }
 
-    return new StatementList(list);
+    return new Grammar::StatementList(list);
 }
 
-bool isSeparatorToken(const Token &token) {
-    return token.type >= TokenType::COMMA && token.type <= TokenType::QUESTION_MARK;
+bool isSeparatorToken(const Lexing::Token &token) {
+    return token.type >= Lexing::TokenType::COMMA && token.type <= Lexing::TokenType::QUESTION_MARK;
 }
 
-bool isStartOfExpression(const Token &token) {
-    return (token.type >= TokenType::CHARACTER && token.type <= TokenType::NAME) 
-    || token.type == TokenType::L_PAREN 
-    || canBeUnaryOperator(token); // Token is an unary operator;
+bool isStartOfExpression(const Lexing::Token &token) {
+    return (token.type >= Lexing::TokenType::CHARACTER && token.type <= Lexing::TokenType::NAME) 
+    || token.type == Lexing::TokenType::L_PAREN 
+    || canBeUnaryOperator(token); // Lexing::Token is an unary operator;
 }
+
+};

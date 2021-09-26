@@ -6,6 +6,8 @@
 
 #include "Lexer.h"
 
+namespace Grammar {
+
 /**
  * @brief Abstract class implementing the expression language construct
  * 
@@ -59,17 +61,17 @@ private:
 
 public:
     /**
-     * @brief Token which contains information about the type of literal;
+     * @brief Lexing::Token which contains information about the type of literal;
      * 
      */
-    Token value;
+    Lexing::Token value;
 
     /**
      * @brief Construct a new Literal Expression object
      *  
-     * @param _value Token value containing information about the literal
+     * @param _value Lexing::Token value containing information about the literal
      */
-    LiteralExpression(const Token &_value);
+    LiteralExpression(const Lexing::Token &_value);
 
     /**
      * @brief Destroy the Literal Expression object
@@ -102,7 +104,7 @@ public:
      * @brief Type of binary operation
      * 
      */
-    TokenType operation;
+    Lexing::TokenType operation;
 
     /**
      * @brief Right operand in binary expression
@@ -117,7 +119,7 @@ public:
      * @param _operation Type of operation of the binary expression
      * @param _right Right operand of the binary expression
      */
-    BinaryExpression(Expression *_left, const TokenType &_operation, Expression *_right);
+    BinaryExpression(Expression *_left, const Lexing::TokenType &_operation, Expression *_right);
 
     /**
      * @brief Destroy the Binary Expression object
@@ -144,7 +146,7 @@ public:
      * @brief Type of unary operation
      * 
      */
-    TokenType operation;
+    Lexing::TokenType operation;
 
     /**
      * @brief Sub-expression 
@@ -158,7 +160,7 @@ public:
      * @param _operation Type of unary operation of the unary expression(should be unary)
      * @param _expr Sub-expression of the unary expression
      */
-    UnaryExpression(const TokenType &_operation, Expression *_expr);
+    UnaryExpression(const Lexing::TokenType &_operation, Expression *_expr);
 
     /**
      * @brief Destroy the Unary Expression object
@@ -344,6 +346,8 @@ public:
      * 
      */
     ~StatementList();
+};
+
 };
 
 #endif // GRAMMAR_H

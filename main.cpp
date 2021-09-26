@@ -17,14 +17,15 @@ int main(int argc, char *argv[]) {
     std::ifstream inputCode(argv[1]);
     std::stringstream buffer;
     buffer << inputCode.rdbuf();
-    Lexer lexer(buffer.str());
-    setupLexer(lexer);
+    
+    Lexing::Lexer lexer(buffer.str());
+    Lexing::setupLexer(lexer);
     lexer.lex();
     
     // lex.printLexed();
 
-    Parser parser(lexer.lexed);
-    Statement *firstLine = (Statement*)parser.recognizeStatementList();
+    Parsing::Parser parser(lexer.lexed);
+    Grammar::Statement *firstLine = (Grammar::Statement*)parser.recognizeStatementList();
 
     std::cout << (*firstLine) << std::endl;
 

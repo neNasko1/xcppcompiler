@@ -1,3 +1,3 @@
 ./compile.sh
 
-./cnas_compiler $1
+./cnas_compiler $1 > $2

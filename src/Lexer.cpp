@@ -2,7 +2,10 @@
 #include <utility>
 #include <string>
 #include <iomanip>
+
 #include "Lexer.h"
+
+namespace Lexing {
 
 bool isDigit(const char c) { return '0' <= c && c <= '9'; }
 bool isSmallLetter(const char c) { return 'a' <= c && c <= 'z'; }
@@ -25,25 +28,34 @@ int typeOfChar(const char c) {
     } else if(isSeparator(c)) {
         return 4; // Separator
     }
-    std::cerr << "Unknown type of char " << c << std::endl;
-    LexerError(LINE());
-    return -100;
+    LexerError("Unknown type of char ", c, "\n");
+    return -1;
 }
 
-void LexerError(int line) {
-    std::cerr << "Lexer error at " << line << std::endl;
+template <typename... T> 
+void LexerErrorPrint(T... t) {
+    (std::cerr << ... << t) << "\n";
+}
+
+template <typename... T> 
+void LexerError(T... t) {
+    std::cerr << "There was an error while parsing " << "\n";
+    LexerErrorPrint(t...);
     exit(0);
 }
 
 /***********************LexerTrie class**********************/
-LexerTrie::Node::Node() {
+LexerTrie::Node::Node() : type(TokenType::NAME) {
     for(size_t i = 0; i < ASCII_SIZE; i ++) {
-        nxt[i] = nullptr;
+        this->nxt[i] = nullptr;
     }
-    type = TokenType::NAME;
 }
 
-LexerTrie::Node::~Node() {}
+LexerTrie::Node::~Node() {
+    for(size_t i = 0; i < ASCII_SIZE; i ++) {
+        delete this->nxt[i];
+    }
+}
 
 void LexerTrie::advance(Node *&curr, const char c) const {
     if(!curr || !curr->nxt[(int)c]) {
@@ -56,14 +68,14 @@ void LexerTrie::advance(Node *&curr, const char c) const {
 LexerTrie::LexerTrie() {root = new Node();}
 LexerTrie::LexerTrie(const std::vector<std::pair<std::string, TokenType> > &_words) {
     for(auto &it : _words) {
-        addWord(it.first, it.second);
+        this->addWord(it.first, it.second);
     }
-    root = new Node();
+    this->root = new Node();
 }
-LexerTrie::~LexerTrie() {}
+LexerTrie::~LexerTrie() {delete root;}
 
 void LexerTrie::addWord(const std::string &toAdd, const TokenType &type) {
-    Node *currNode = root;
+    auto currNode = this->root;
     for(auto &it : toAdd) {
         if(currNode->nxt[(int)it]) {
             currNode = currNode->nxt[(int)it];
@@ -76,7 +88,7 @@ void LexerTrie::addWord(const std::string &toAdd, const TokenType &type) {
 }
 
 TokenType LexerTrie::findWord(const std::string &toFind) const {
-    auto currNode = root;
+    auto currNode = this->root;
     for(auto &it : toFind) {
         currNode = currNode->nxt[(int)it];
         if(!currNode) {return NAME;}
@@ -86,11 +98,12 @@ TokenType LexerTrie::findWord(const std::string &toFind) const {
 
 /***********************Token class*************************/
 Token::Token() {}
-Token::Token(const TokenType &_type, const std::string &_lexeme, const int &_lineNmb, const int &_startPos) : type(_type), lexeme(_lexeme), lineNmb(_lineNmb), startPos(_startPos) {}
+Token::Token(const TokenType &_type, const std::string &_lexeme, const int &_lineNmb, const int &_startPos) 
+            : type(_type), lexeme(_lexeme), lineNmb(_lineNmb), startPos(_startPos) {}
 Token::~Token() {}
 
 std::ostream& operator <<(std::ostream &os, const Token &token) {
-    return os << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.lexeme << "| " << std::setw(15) << TokenTypeName[token.type] << std::endl;
+    return os << token.lineNmb << ", " << std::setw(7) << token.startPos << "| " << std::setw(15) << token.lexeme << "| " << std::setw(15) << TokenTypeName[token.type] << "\n";
 }
 
 bool canBeUnaryOperator(const Token &token) {
@@ -189,8 +202,7 @@ Token Lexer::recognizeString() {
         this->advance();
     }
     if(this->isAtEnd()) {
-        std::cerr << "String not closed " << std::endl;
-        LexerError(LINE());
+        LexerError("String literal not closed \n");
     }
     return Token(TokenType::STRING, stringValue);
 }
@@ -199,13 +211,11 @@ Token Lexer::recognizeChar() {
     std::string charValue = "";
     this->advance();
     if(this->isAtEnd()) {
-        std::cerr << "Char not closed " << std::endl;
-        LexerError(LINE());
+        LexerError("Char not closed \n");
     }
     charValue.push_back(this->advance());
     if(this->isAtEnd() || this->peek() != '\'') {
-        std::cerr << "Char not closed " << std::endl;
-        LexerError(LINE());
+        LexerError("Char not closed \n");
     }
     this->advance();
     return Token(TokenType::CHARACTER, charValue);
@@ -231,8 +241,7 @@ void Lexer::lex() {
         } else if(currentChar == '\'') {
             currentToken = this->recognizeChar();
         } else {
-            std::cerr << "Lexing error: Found character " << currentChar << " at " << this->lineNmb << " " << this->charNmb << std::endl;
-            LexerError(LINE());
+            LexerError("Lexing error: Found character ", currentChar, " at ", this->lineNmb, " ", this->charNmb, "\n");
         }
         currentToken.lineNmb = this->lineNmb;
         currentToken.startPos = startPos;
@@ -243,11 +252,11 @@ void Lexer::lex() {
 
 void Lexer::printLexed() const {
     std::ios init(NULL);
-    init.copyfmt(std::cerr);
+    init.copyfmt(std::cout);
     for(auto &it : this->lexed) {
-        std::cerr << it;
+        std::cout << it;
     }
-    std::cerr.copyfmt(init);
+    std::cout.copyfmt(init);
 }
 
 void setupLexer(Lexer &lexer) {
@@ -275,4 +284,4 @@ void setupLexer(Lexer &lexer) {
     }
 }
 
-
+};

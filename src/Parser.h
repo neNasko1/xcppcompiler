@@ -5,17 +5,18 @@
 #include <vector>
 #include <stack>
 #include "Lexer.h"
+
 #include "Grammar.h"
 
-/**
- * @brief Print the line of the parsing error in compiler code and exit(0)
- * 
- * @param line 
- */
-void ParserError(int line);
+namespace Parsing {
 
-class Statement;
-class Expression;
+/**
+ * @brief Print the parameters given and exit
+ * 
+ * @param T 
+ */
+template <typename... T> 
+void ParserError(T... t);
 
 /**
  * @brief Parser class which generates AST from the input Tokens
@@ -28,7 +29,7 @@ public:
      * @brief Tokens to parse
      * 
      */
-    std::vector<Token> tokens;
+    std::vector<Lexing::Token> tokens;
     
     /**
      * @brief Current token being looked at
@@ -39,16 +40,16 @@ public:
     /**
      * @brief Look at next token in code
      * 
-     * @return Token Next token
+     * @return Lexing::Token Next token
      */
-    Token peek() const;
+    Lexing::Token peek() const;
     
     /**
      * @brief Look at next character in code, and move codePtr
      * 
      * @return char Next character
      */
-    Token advance();
+    Lexing::Token advance();
     
     /**
      * @brief Advance current token matches the given type 
@@ -56,7 +57,7 @@ public:
      * @param type Type to match agains
      * @return true if the parser pointer advanced and false otherwise
      */
-    bool match(const TokenType type);
+    bool match(const Lexing::TokenType type);
 
     /**
      * @brief Advance if current token matches the given type exit with parser error otherwise
@@ -64,7 +65,7 @@ public:
      * @param type Type to match agains
      * @return true If there was no parsing error
      */
-    bool hardMatch(const TokenType type);
+    bool hardMatch(const Lexing::TokenType type);
 
     /**
      * @brief Check if codePtr is at the end of the input code
@@ -79,42 +80,42 @@ public:
      * @param expStack Stack with expressions
      * @param opStack Stack with operations
      */
-    void combineTop(std::stack<Expression* > &expStack, std::stack<Token> &opStack) const;
+    void combineTop(std::stack<Grammar::Expression* > &expStack, std::stack<Lexing::Token> &opStack) const;
 
     /**
      * @brief Recognize expression starting from the parser pointer
      * 
-     * @return Expression* Recognized expression
+     * @return Grammar::Expression* Recognized expression
      */
-    Expression *recognizeExpression();
+    Grammar::Expression *recognizeExpression();
 
     /**
      * @brief Recognize function call starting from the parser pointer
      * 
-     * @return Expression* Recognized function call
+     * @return Grammar::Expression* Recognized function call
      */
-    Expression *recognizeFunctionCall();
+    Grammar::Expression *recognizeFunctionCall();
 
     /**
      * @brief Recognize expression statement starting from the parser pointer
      * 
-     * @return Statement* Recognized statement
+     * @return Grammar::Statement* Recognized statement
      */
-    Statement *recognizeExpressionStatement();
+    Grammar::Statement *recognizeExpressionStatement();
 
     /**
      * @brief Recognize if statement starting from the parser pointer
      * 
-     * @return Statement* Recognized if statement
+     * @return Grammar::Statement* Recognized if statement
      */
-    Statement *recognizeIfStatement();
+    Grammar::Statement *recognizeIfStatement();
 
     /**
      * @brief Recognize statement list starting from the parser pointer starting with a L_BRACE and ending at a R_BRACE
      * 
-     * @return Statement* Recognized statement list
+     * @return Grammar::Statement* Recognized statement list
      */
-    StatementList *recognizeStatementList();
+    Grammar::StatementList *recognizeStatementList();
 
 public:
     // TODO: move to a different location
@@ -143,7 +144,7 @@ public:
      * 
      * @param _tokens 
      */
-    Parser(const std::vector<Token> &_tokens);
+    Parser(const std::vector<Lexing::Token> &_tokens);
 
     /**
      * @brief Destroy the Parser object
@@ -158,7 +159,7 @@ public:
  * @param token 
  * @return true if token can be start of an expression and false otherwise
  */
-bool isStartOfExpression(const Token &token);
+bool isStartOfExpression(const Lexing::Token &token);
 
 /**
  * @brief 
@@ -166,6 +167,8 @@ bool isStartOfExpression(const Token &token);
  * @param token 
  * @return true if token can be start of an expression and false otherwise
  */
-bool isSeparatorToken(const Token &token);
+bool isSeparatorToken(const Lexing::Token &token);
+
+};
 
 #endif // PARSER_H

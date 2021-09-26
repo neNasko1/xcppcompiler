@@ -7,6 +7,8 @@
 #include <utility>
 #include <string>
 
+namespace Lexing {
+
 #define LINE() __LINE__
 
 /**
@@ -69,11 +71,12 @@ const int precedence[TokenType::size] = {
 };
 
 /**
- * @brief Print the line of the lexing error in compiler code and exit(0)
+ * @brief Print the parameters given and exit
  * 
- * @param line 
+ * @param T 
  */
-void LexerError(int line);
+template <typename... T> 
+void LexerError(T... t);
 
 bool isDigit(const char c);
 bool isSmallLetter(const char c);
@@ -397,5 +400,7 @@ public:
  * @param lexer Lexer to setup
  */
 void setupLexer(Lexer &lexer);
+
+};
 
 #endif // LEXER_H

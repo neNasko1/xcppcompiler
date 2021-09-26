@@ -1,6 +1,6 @@
 {
-    if(fizz(10) + buzz(150) >= 0) {
-        if(a <-3) {
+    if fizz(10) + buzz(150) >= 0 {
+        if a < -3 {
             a = a + 2;
             b = c - 3;
         }
