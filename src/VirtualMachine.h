@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "VirtualMachineOperations.h"
+
 namespace VM {
 
 /**
@@ -15,49 +17,6 @@ template <typename... T>
 void VMError(T... t);
 
 typedef int64_t Byte;
-
-// Todo: maybe move this to a different class
-enum VariableType {
-    INT64,
-};
-
-class MemoryCell {
-private:
-    /**
-     * @brief Type of value this cell is holding
-     * 
-     */
-    VariableType type;
-
-    /**
-     * @brief Value
-     * 
-     */
-    union {
-        int64_t int64Val;
-    } value;
-
-public: 
-
-    /**
-     * @brief Construct a new Memory Cell object
-     * 
-     */
-    MemoryCell();
-
-    /**
-     * @brief Destroy the Memory Cell object
-     * 
-     */
-    ~MemoryCell();
-
-    static MemoryCell int64Add(const MemoryCell &a, const MemoryCell &b);
-    static MemoryCell int64Subtract(const MemoryCell &a, const MemoryCell &b);
-    static MemoryCell int64Multiply(const MemoryCell &a, const MemoryCell &b);
-    static MemoryCell int64Divide(const MemoryCell &a, const MemoryCell &b);  
-    static void int64Print(const MemoryCell &a);
-    static MemoryCell int64MemoryCell(const int64_t val);
-};
 
 /**
  * @brief Types of instructions
@@ -71,6 +30,11 @@ enum InstructionType : Byte {
     INT64_SUBTRACT,
     INT64_MULTIPLY,
     INT64_DIVIDE,
+    INT64_MODULO,
+    INT64_OR,
+    INT64_AND,
+    INT64_XOR,
+    INT64_NOT,
 
     SIZE
 };

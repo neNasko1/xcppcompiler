@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "VirtualMachine.h"
+#include "VirtualMachineOperations.h"
 
 namespace VM {
 
@@ -16,38 +17,6 @@ void VMError(T... t) {
     VMErrorPrint(t...);
     exit(0);
 }
-
-MemoryCell::MemoryCell() {}
-MemoryCell::~MemoryCell() {}
-
-MemoryCell MemoryCell::int64Add(const MemoryCell &a, const MemoryCell &b) {
-    return int64MemoryCell(a.value.int64Val + b.value.int64Val);
-}
-
-MemoryCell MemoryCell::int64Subtract(const MemoryCell &a, const MemoryCell &b) {
-    return int64MemoryCell(a.value.int64Val - b.value.int64Val);
-}
-
-MemoryCell MemoryCell::int64Multiply(const MemoryCell &a, const MemoryCell &b) {
-    return int64MemoryCell(a.value.int64Val * b.value.int64Val);
-}
-
-MemoryCell MemoryCell::int64Divide(const MemoryCell &a, const MemoryCell &b) {
-    return int64MemoryCell(a.value.int64Val / b.value.int64Val);
-}
-
-void MemoryCell::int64Print(const MemoryCell &a) {
-    // Todo remove
-    std::cout << a.value.int64Val << "\n";
-}
-
-MemoryCell MemoryCell::int64MemoryCell(const int64_t val) {
-    MemoryCell cell;
-    cell.type = INT64;
-    cell.value.int64Val = val;
-    return cell;
-}
-
 
 VirtualMachine::VirtualMachine(std::vector<Byte> &_code) : code(_code), nextByte(0) {}
 
@@ -90,30 +59,55 @@ void VirtualMachine::execute() {
         Byte next = this->advance();
         switch(next) {
         case InstructionType::PRINT:
-            MemoryCell::int64Print(this->top());
+            int64Print(this->top());
             break;
         case InstructionType::INT64_LOAD:
             // Load next integer
-            this->push(MemoryCell::int64MemoryCell((int64_t)this->advance()));
+            this->push(int64MemoryCell((int64_t)this->advance()));
             break;
         case InstructionType::INT64_ADD: {
             auto a = this->pop(), b = this->pop();
-            this->push(MemoryCell::int64Add(b, a));
+            this->push(int64Add(b, a));
             break;
         }
         case InstructionType::INT64_SUBTRACT: {
             auto a = this->pop(), b = this->pop();
-            this->push(MemoryCell::int64Subtract(b, a));
+            this->push(int64Subtract(b, a));
             break;
         }
         case InstructionType::INT64_MULTIPLY: {
             auto a = this->pop(), b = this->pop();
-            this->push(MemoryCell::int64Multiply(b, a));
+            this->push(int64Multiply(b, a));
             break;
         }
         case InstructionType::INT64_DIVIDE: {
             auto a = this->pop(), b = this->pop();
-            this->push(MemoryCell::int64Divide(b, a));
+            this->push(int64Divide(b, a));
+            break;
+        }
+        case InstructionType::INT64_MODULO: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64Modulo(b, a));
+            break;
+        }
+        case InstructionType::INT64_OR: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64Or(b, a));
+            break;
+        }
+        case InstructionType::INT64_AND: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64And(b, a));
+            break;
+        }
+        case InstructionType::INT64_XOR: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64Xor(b, a));
+            break;
+        }
+        case InstructionType::INT64_NOT: {
+            auto a = this->pop();
+            this->push(int64BitwiseNot(a));
             break;
         }
         default:
