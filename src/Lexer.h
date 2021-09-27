@@ -15,7 +15,7 @@ namespace Lexing {
  * @brief TokenType including all types of tokens in the language
  * 
  */
-const int ASCII_SIZE = 256;
+const int32_t ASCII_SIZE = 256;
 enum TokenType {
     //Keywords
     ELSE, FUNCTION, FOR, IF, RETURN, VAR, WHILE, DO,
@@ -58,7 +58,7 @@ const std::string TokenTypeName[TokenType::size] = {
  * (parity of precedence gives information about associativity - even-left odd-right)
  * 
  */
-const int precedence[TokenType::size] = {
+const int32_t precedence[TokenType::size] = {
     -1, -1, -1, -1, -1, -1, -1, -1,
     12, 12, 10, 10, 10, 26, 22, 24, 7,
     35, 35, 35, 35, 35, 35, 35, 35, 35,
@@ -86,7 +86,7 @@ bool isWhitespace(const char c);
 bool isBracket(const char c);
 bool isOperator(const char c);
 bool isSeparator(const char c);
-int  typeOfChar(const char c);
+int32_t  typeOfChar(const char c);
 
 /**
  * @brief Trie structure supporting adding words and finding words in O(len)
@@ -200,13 +200,13 @@ public:
      * @brief Line number in file
      * 
      */
-    int lineNmb;
+    int32_t lineNmb;
 
     /**
      * @brief Position in line
      * 
      */
-    int startPos;
+    int32_t startPos;
 
     /**
      * @brief Construct a new Token object
@@ -222,7 +222,7 @@ public:
      * @param _lineNmb Line number in file
      * @param _startPos Position in line
      */
-    Token(const TokenType &_type, const std::string &_lexeme = "", const int &_lineNmb = 0, const int &_startPos = 0);
+    Token(const TokenType &_type, const std::string &_lexeme = "", const int32_t &_lineNmb = 0, const int32_t &_startPos = 0);
 
     /**
      * @brief Destroy the Token object
@@ -271,19 +271,19 @@ private:
      * @brief Current character being looked at
      * 
      */
-    int codePtr;
+    int32_t codePtr;
 
     /**
      * @brief Current line number
      * 
      */
-    int lineNmb;
+    int32_t lineNmb;
 
     /**
      * @brief Current char number in current line
      * 
      */
-    int charNmb;
+    int32_t charNmb;
 
     /**
      * @brief LexTrie which contains all reserved words and operators

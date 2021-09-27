@@ -35,7 +35,7 @@ public:
      * @brief Current token being looked at
      * 
      */
-    int codePtr;
+    int32_t codePtr;
     
     /**
      * @brief Look at next token in code
@@ -137,14 +137,14 @@ public:
      * @brief Tab identation of the current recursive printing of expression
      * 
      */
-    static int tabIdentation;
+    static int32_t tabIdentation;
 
     /**
      * @brief Change tab identation
      * 
      * @param deltaTabs Amount of tab identation to add
      */
-    static void addTabIdentation(const int deltaTabs = 0);
+    static void addTabIdentation(const int32_t deltaTabs = 0);
 
     /**
      * @brief Get the Tab Identation value

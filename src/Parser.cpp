@@ -24,7 +24,7 @@ void ParserError(T... t) {
     exit(0);
 }
 
-int Parser::tabIdentation = 0;
+int32_t Parser::tabIdentation = 0;
 
 Parser::Parser(const std::vector<Lexing::Token> &_tokens) : tokens(_tokens), codePtr(0) {}
 Parser::~Parser() {}
@@ -49,13 +49,13 @@ bool Parser::isAtEnd() const {
     return this->peek().type == Lexing::TokenType::END_OF_FILE;
 }
 
-void Parser::addTabIdentation(const int deltaTabs) {
+void Parser::addTabIdentation(const int32_t deltaTabs) {
     Parser::tabIdentation += deltaTabs;
 }
 
 std::string Parser::getTabIdentation() {
     std::string ret = "";
-    for(int i = 0; i < Parser::tabIdentation; i ++) {
+    for(int32_t i = 0; i < Parser::tabIdentation; i ++) {
         ret += ",  ";
     }
     return ret;
@@ -106,7 +106,7 @@ void Parser::combineTop(std::stack<Grammar::Expression* > &expStack, std::stack<
         ParserError("Not enough operators in stack", "\n");
     }
     auto op = opStack.top(); opStack.pop();
-    if(Lexing::precedence[(int)op.type] == -1) {
+    if(Lexing::precedence[(int32_t)op.type] == -1) {
         ParserError("Trying to combine top with ", op, "\n");
     }
     if(Lexing::precedence[op.type] == 7) { // These are the unary operations TODO
@@ -133,7 +133,7 @@ Grammar::Expression *Parser::recognizeExpression() {
     std::stack<Grammar::Expression*> expStack; 
     std::stack<Lexing::Token> opStack; 
     bool canBeUnary = true;
-    int cntL_PAREN = 0; 
+    int32_t cntL_PAREN = 0; 
 
     while(true) {
         if(this->isAtEnd()) {
@@ -148,7 +148,7 @@ Grammar::Expression *Parser::recognizeExpression() {
 
         this->advance();
 
-        if(Lexing::precedence[(int)currentToken.type] != -1) {
+        if(Lexing::precedence[(int32_t)currentToken.type] != -1) {
             if(canBeUnary && canBeUnaryOperator(currentToken)) {
                 // We can and have to transform this operator token to its matching unary token
                 transformToMatchingUnary(currentToken);

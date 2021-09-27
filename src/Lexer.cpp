@@ -10,13 +10,13 @@ namespace Lexing {
 bool isDigit(const char c) { return '0' <= c && c <= '9'; }
 bool isSmallLetter(const char c) { return 'a' <= c && c <= 'z'; }
 bool isBigLetter(const char c) { return 'A' <= c && c <= 'Z'; }
-bool isLetter(const char c) { return isSmallLetter(c) || isBigLetter(c); }
+bool isLetter(const char c) { return isSmallLetter(c) || isBigLetter(c) || c == '_'; } // TODO: clunky
 bool isWhitespace(const char c) { return c == ' ' || c == '\n' || c == '\t'; }
 bool isBracket(const char c) { return c == '(' || c == ')' || c == '{' || c == '}' || c == '[' || c == ']'; }
 bool isOperator(const char c) { return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '&' || c == '|' || c == '^' || c == '~' || c == '=' || c == '<' || c == '>' || c == '!' || c == ','; }
 bool isSeparator(const char c) { return c == ';' || c == ':' || c == '.' || c == '?'; }
 
-int typeOfChar(const char c) {
+int32_t typeOfChar(const char c) {
     if(isWhitespace(c)) {
         return -1; //Whitespace
     } else if(isDigit(c) || isLetter(c)) {
@@ -58,11 +58,11 @@ LexerTrie::Node::~Node() {
 }
 
 void LexerTrie::advance(Node *&curr, const char c) const {
-    if(!curr || !curr->nxt[(int)c]) {
+    if(!curr || !curr->nxt[(int32_t)c]) {
         curr = nullptr;
         return;
     }
-    curr = curr->nxt[(int)c];
+    curr = curr->nxt[(int32_t)c];
 }
 
 LexerTrie::LexerTrie() {root = new Node();}
@@ -77,11 +77,11 @@ LexerTrie::~LexerTrie() {delete root;}
 void LexerTrie::addWord(const std::string &toAdd, const TokenType &type) {
     auto currNode = this->root;
     for(auto &it : toAdd) {
-        if(currNode->nxt[(int)it]) {
-            currNode = currNode->nxt[(int)it];
+        if(currNode->nxt[(int32_t)it]) {
+            currNode = currNode->nxt[(int32_t)it];
         } else {
-            currNode->nxt[(int)it] = new Node();
-            currNode = currNode->nxt[(int)it];
+            currNode->nxt[(int32_t)it] = new Node();
+            currNode = currNode->nxt[(int32_t)it];
         }
     }
     currNode->type = type;
@@ -90,7 +90,7 @@ void LexerTrie::addWord(const std::string &toAdd, const TokenType &type) {
 TokenType LexerTrie::findWord(const std::string &toFind) const {
     auto currNode = this->root;
     for(auto &it : toFind) {
-        currNode = currNode->nxt[(int)it];
+        currNode = currNode->nxt[(int32_t)it];
         if(!currNode) {return NAME;}
     }
     return currNode->type;
@@ -98,7 +98,7 @@ TokenType LexerTrie::findWord(const std::string &toFind) const {
 
 /***********************Token class*************************/
 Token::Token() {}
-Token::Token(const TokenType &_type, const std::string &_lexeme, const int &_lineNmb, const int &_startPos) 
+Token::Token(const TokenType &_type, const std::string &_lexeme, const int32_t &_lineNmb, const int32_t &_startPos) 
             : type(_type), lexeme(_lexeme), lineNmb(_lineNmb), startPos(_startPos) {}
 Token::~Token() {}
 
@@ -138,7 +138,7 @@ char Lexer::advance() {
     }
     return this->code[codePtr ++];
 }
-bool Lexer::isAtEnd() const { return codePtr == (int)code.size(); }
+bool Lexer::isAtEnd() const { return codePtr == (int32_t)code.size(); }
 
 void Lexer::addWord(const std::string &toAdd, const TokenType &type) {
     lexTrie.addWord(toAdd, type);
@@ -148,7 +148,7 @@ Token Lexer::recognizeOperator() {
     LexerTrie::Node *currentNode = lexTrie.root;
     while(!this->isAtEnd()) {
         char current = this->peek();
-        if(!currentNode->nxt[(int)current]) {
+        if(!currentNode->nxt[(int32_t)current]) {
             break;
         }
         this->lexTrie.advance(currentNode, current);
@@ -224,7 +224,7 @@ Token Lexer::recognizeChar() {
 void Lexer::lex() {
     this->lexed.resize(0);
     while(!this->isAtEnd()) {
-        char currentChar = this->peek(); int startPos = this->charNmb;
+        char currentChar = this->peek(); int32_t startPos = this->charNmb;
 
         Token currentToken;
         if(isWhitespace(currentChar)) {

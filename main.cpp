@@ -7,8 +7,25 @@
 #include "src/Lexer.h"
 #include "src/Grammar.h"
 #include "src/Parser.h"
+#include "src/VirtualMachine.h"
 
 int main(int argc, char *argv[]) {
+    std::vector<VM::Byte> code = {
+        VM::InstructionType::INT64_LOAD, 120,
+        VM::InstructionType::INT64_LOAD, 40,
+        VM::InstructionType::INT64_LOAD, 20,
+        VM::InstructionType::INT64_DIVIDE,
+        VM::InstructionType::INT64_DIVIDE,
+        VM::InstructionType::INT64_LOAD, 59,
+        VM::InstructionType::INT64_ADD,
+        VM::InstructionType::PRINT
+    };
+
+    VM::VirtualMachine vm(code);
+    vm.execute();
+
+    return 0;
+
     if(argc == 1) {
         std::cerr << "There is no file to compile" << std::endl;
         return 0;
