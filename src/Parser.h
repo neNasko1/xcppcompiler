@@ -104,6 +104,13 @@ public:
     Grammar::Statement *recognizeExpressionStatement();
 
     /**
+     * @brief Recognize declaration statement starting from the parser pointer
+     * 
+     * @return Grammar::Statement* Recognized if statement
+     */
+    Grammar::Statement *recognizeDeclarationStatement();
+
+    /**
      * @brief Recognize if statement starting from the parser pointer
      * 
      * @return Grammar::Statement* Recognized if statement

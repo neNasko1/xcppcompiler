@@ -29,5 +29,5 @@ int main(int argc, char *argv[]) {
 
     std::cout << (*firstLine) << std::endl;
 
-
+    delete firstLine;
 }

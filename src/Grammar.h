@@ -239,6 +239,49 @@ public:
     friend std::ostream& operator <<(std::ostream &os, const Statement &expr);
 };
 
+class DeclarationStatement final : public Statement {
+private:
+    /**
+     * @brief Print contents of a statement recursively to std::ostream
+     * 
+     * @param os Stream to output to
+     * @return std::ostream&  Modified stream
+     */
+    std::ostream& hiddenPrint(std::ostream &os) const;
+public: 
+    /**
+     * @brief Variable name
+     * 
+     */
+    std::string name;
+
+    /**
+     * @brief Variable type
+     * 
+     */
+    std::string type;
+
+    /**
+     * @brief Initialization value
+     * 
+     */
+    Expression *expr;
+
+    /**
+     * @brief Construct a new Declaration Statement object
+     * 
+     * @param _name 
+     * @param _expr 
+     */
+    DeclarationStatement(const std::string &_name, const std::string &_type = "", Expression *_expr = nullptr);
+
+    /**
+     * @brief Destroy the Declaration Statement object
+     * 
+     */
+    ~DeclarationStatement();
+};
+
 /**
  * @brief Class representing a statement consisting only of an expression
  * 

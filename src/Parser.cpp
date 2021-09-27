@@ -98,6 +98,7 @@ Grammar::Expression *Parser::recognizeFunctionCall() {
 }
 
 void Parser::combineTop(std::stack<Grammar::Expression* > &expStack, std::stack<Lexing::Token> &opStack) const {
+    // TODO find a place for this function
     if(expStack.size() < 2 && opStack.size() < 1) {
         ParserError("Not enough operators and operands to combine expressions in AST ", "\n");
     }
@@ -234,6 +235,41 @@ Grammar::Expression *Parser::recognizeExpression() {
     return expStack.top();
 }
 
+Grammar::Statement *Parser::recognizeDeclarationStatement() {
+    HARD_MATCH(Lexing::TokenType::VAR);
+    std::string name = "";
+    std::string type = "";
+    Grammar::Expression *expr = nullptr;
+
+    if(this->peek().type != Lexing::TokenType::NAME) {
+        ParserError("Unexpected token in variable declaration \n", this->peek(), "when expecting variable name ");
+    } 
+    name = this->advance().lexeme;
+
+    if(this->match(Lexing::TokenType::COLON)) {
+        if(this->peek().type != Lexing::TokenType::NAME) {
+            ParserError("Unexpected token in variable declaration \n", this->peek(), "when expecting variable type ");
+        } 
+        type = this->advance().lexeme;        
+
+        if(isSeparatorToken(this->peek())) {
+            // All is good we are ready to return to continue
+            this->advance();
+        } else {
+            HARD_MATCH(Lexing::TokenType::EQUAL);
+            expr = this->recognizeExpression();
+            if(!isSeparatorToken(this->peek())) {
+                ParserError("Unexpected token in variable declaration \n", this->peek(), "when expecting variable declaration termination");
+            }
+            this->advance();
+        }
+    } else {
+        ParserError("TODO - variable declaration cannot deduce variable type from expression type");
+    }
+
+    return new Grammar::DeclarationStatement(name, type, expr);
+}
+
 Grammar::Statement *Parser::recognizeExpressionStatement() {
     Grammar::Expression *expr = this->recognizeExpression();
 
@@ -291,6 +327,8 @@ Grammar::Statement *Parser::recognizeStatement() {
     if(currentToken.type == Lexing::TokenType::IF) {
         // We have to recognize if
         return this->recognizeIfStatement();
+    } else if(currentToken.type == Lexing::TokenType::VAR) {
+        return this->recognizeDeclarationStatement();
     } else if(isStartOfStatementList(currentToken)) {
         return this->recognizeStatementList();
     } else {
@@ -307,7 +345,7 @@ Grammar::Statement *Parser::recognizeStatement() {
 }
 
 bool isSeparatorToken(const Lexing::Token &token) {
-    return token.type >= Lexing::TokenType::COMMA && token.type <= Lexing::TokenType::QUESTION_MARK;
+    return token.type == Lexing::TokenType::COMMA || token.type == Lexing::TokenType::SEMICOLON;
 }
 
 bool isStartOfExpression(const Lexing::Token &token) {
