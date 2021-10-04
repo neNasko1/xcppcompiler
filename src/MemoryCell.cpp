@@ -101,6 +101,14 @@ MemoryCell int64BiggerEqual(const MemoryCell &a, const MemoryCell &b) {
     return boolMemoryCell(a.as.INT64 >= b.as.INT64);
 }
 
+MemoryCell int64Equal(const MemoryCell &a, const MemoryCell &b) {
+    return boolMemoryCell(a.as.INT64 == b.as.INT64);
+}
+
+MemoryCell int64NotEqual(const MemoryCell &a, const MemoryCell &b) {
+    return boolMemoryCell(a.as.INT64 != b.as.INT64);
+}
+
 void int64Print(const MemoryCell &a) {
     // Todo remove
     std::cout << a.as.INT64 << "\n";
@@ -121,6 +129,14 @@ MemoryCell boolXor(const MemoryCell &a, const MemoryCell &b) {
 
 MemoryCell boolNot(const MemoryCell &a) {
     return boolMemoryCell(!a.as.BOOL);
+}
+
+MemoryCell boolEqual(const MemoryCell &a, const MemoryCell &b) {
+    return boolMemoryCell(a.as.BOOL == b.as.BOOL);
+}
+
+MemoryCell boolNotEqual(const MemoryCell &a, const MemoryCell &b) {
+    return boolMemoryCell(a.as.BOOL != b.as.BOOL);
 }
 
 void boolPrint(const MemoryCell &a) {

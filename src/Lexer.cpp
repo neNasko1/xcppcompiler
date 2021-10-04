@@ -185,7 +185,7 @@ Token Lexer::recognizeWord() {
     if(!currentNode || currentNode->type == TokenType::NAME) {
         return Token(TokenType::NAME, nameValue);
     } else {
-        return Token(currentNode->type);
+        return Token(currentNode->type, nameValue);
     }
 }
 
@@ -271,8 +271,8 @@ void setupLexer(Lexer &lexer) {
         {"+=", TokenType::PLUS_EQUAL}, {"-=", TokenType::MINUS_EQUAL}, {"*=", TokenType::STAR_EQUAL}, {"/=", TokenType::SLASH_EQUAL}, {"%=", TokenType::MODULO_EQUAL},
         {"|=", TokenType::OR_EQUAL}, {"&=", TokenType::AND_EQUAL}, {"^=", TokenType::XOR_EQUAL}, {"=", TokenType::EQUAL}, //'Nonconstant' operators
         //Boolean operators
-        {"!", TokenType::BANG}, {"!", TokenType::BANG_EQUAL}, {"==", TokenType::EQUAL_EQUAL}, {"<", TokenType::LESS}, {"<=", TokenType::LESS_EQUAL},
-        {">", TokenType::GREATER}, {">=", TokenType::GREATER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR}, {",", TokenType::COMMA},
+        {"!", TokenType::BANG}, {"!", TokenType::BANG_EQUAL}, {"==", TokenType::EQUAL_EQUAL}, {"<", TokenType::SMALLER}, {"<=", TokenType::SMALLER_EQUAL},
+        {">", TokenType::BIGGER}, {">=", TokenType::BIGGER_EQUAL}, {"||", TokenType::OROR}, {"&&", TokenType::ANDAND}, {"^^", TokenType::XORXOR}, {",", TokenType::COMMA},
         //Separators
         {";", TokenType::SEMICOLON}, {".", TokenType::DOT}, {":", TokenType::COLON}, {"?", TokenType::COLON},
         //Brackets

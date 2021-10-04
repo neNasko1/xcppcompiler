@@ -6,6 +6,7 @@
 
 #include "Lexer.h"
 #include "VirtualMachine.h"
+#include "GrammarTypeChecking.h"
 
 namespace Grammar {
 
@@ -34,6 +35,12 @@ public:
     Expression();
 
     /**
+     * @brief Return value type
+     * 
+     */
+    Type *type;
+
+    /**
      * @brief Destroy the Expression object
      * 
      */
@@ -44,7 +51,13 @@ public:
      * 
      * @param buffer 
      */
-    virtual void generateBytecode(std::vector<VM::Byte> &buffer) = 0;
+    virtual void generateBytecode(std::vector<VM::Byte> &buffer) const = 0;
+
+    /**
+     * @brief Deduce return type of expression
+     * 
+     */
+    virtual void deduceType() = 0;
 
     /**
      * @brief Friend function outputing contents of an expression to std::ostream
@@ -95,7 +108,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+
+    /**
+     * @brief Deduce return type of expression
+     * 
+     */
+    void deduceType();
 };
 
 /**
@@ -150,7 +169,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+
+    /**
+     * @brief Deduce return type of expression
+     * 
+     */
+    void deduceType();
 };
 
 /**
@@ -198,7 +223,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+
+    /**
+     * @brief Deduce return type of expression
+     * 
+     */
+    void deduceType();
 };
 
 /**
@@ -246,7 +277,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+
+    /**
+     * @brief Deduce return type of expression
+     * 
+     */
+    void deduceType();
 };
 
 /**
@@ -282,7 +319,7 @@ public:
      * 
      * @param buffer 
      */
-    virtual void generateBytecode(std::vector<VM::Byte> &buffer) = 0;
+    virtual void generateBytecode(std::vector<VM::Byte> &buffer) const = 0;
 };
 
 class DeclarationStatement final : public Statement {
@@ -332,7 +369,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
 };
 
 /**
@@ -373,7 +410,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
 };
 
 /**
@@ -426,7 +463,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
 };
 
 /**
@@ -462,7 +499,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer);
+    void generateBytecode(std::vector<VM::Byte> &buffer) const;
 };
 
 };

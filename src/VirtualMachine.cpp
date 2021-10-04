@@ -139,6 +139,16 @@ void VirtualMachine::execute() {
             this->push(int64BiggerEqual(b, a));
             break;
         }
+        case InstructionType::INT64_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64Equal(b, a));
+            break;
+        }
+        case InstructionType::INT64_NOT_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64NotEqual(b, a));
+            break;
+        }
 
         case InstructionType::BOOL_LOAD: {
             this->push(boolMemoryCell((bool)this->advance()));
@@ -162,6 +172,16 @@ void VirtualMachine::execute() {
         case InstructionType::BOOL_NOT: {
             auto a = this->pop();
             this->push(boolNot(a));
+            break;
+        }
+        case InstructionType::BOOL_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(boolEqual(b, a));
+            break;
+        }
+        case InstructionType::BOOL_NOT_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(boolNotEqual(b, a));
             break;
         }
 

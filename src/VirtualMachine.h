@@ -40,12 +40,16 @@ enum InstructionType : Byte {
     INT64_SMALLER_EQUAL,
     INT64_BIGGER,
     INT64_BIGGER_EQUAL,
+    INT64_EQUAL,
+    INT64_NOT_EQUAL,
 
     BOOL_LOAD,
     BOOL_OR,
     BOOL_AND,
     BOOL_XOR,
     BOOL_NOT,
+    BOOL_EQUAL,
+    BOOL_NOT_EQUAL,
 
     INT64_TO_BOOL,
     BOOL_TO_INT64,

@@ -70,12 +70,16 @@ MemoryCell int64Smaller(const MemoryCell &a, const MemoryCell &b);
 MemoryCell int64SmallerEqual(const MemoryCell &a, const MemoryCell &b);
 MemoryCell int64Bigger(const MemoryCell &a, const MemoryCell &b);
 MemoryCell int64BiggerEqual(const MemoryCell &a, const MemoryCell &b);
+MemoryCell int64Equal(const MemoryCell &a, const MemoryCell &b);
+MemoryCell int64NotEqual(const MemoryCell &a, const MemoryCell &b);
 void int64Print(const MemoryCell &a);
 
 MemoryCell boolOr(const MemoryCell &a, const MemoryCell &b);
 MemoryCell boolAnd(const MemoryCell &a, const MemoryCell &b);
 MemoryCell boolXor(const MemoryCell &a, const MemoryCell &b);
 MemoryCell boolNot(const MemoryCell &a);
+MemoryCell boolEqual(const MemoryCell &a, const MemoryCell &b);
+MemoryCell boolNotEqual(const MemoryCell &a, const MemoryCell &b);
 void boolPrint(const MemoryCell &a);
 
 MemoryCell int64ToBool(const MemoryCell &a);
