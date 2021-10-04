@@ -2,12 +2,12 @@
 #include <iostream>
 
 #include "VirtualMachine.h"
-#include "VirtualMachineOperations.h"
+#include "MemoryCell.h"
 
 namespace VM {
 
 template <typename... T> 
-void VMErrorPrint(T... t) {
+static void VMErrorPrint(T... t) {
     (std::cerr << ... << t) << "\n";
 }
 
@@ -58,13 +58,22 @@ void VirtualMachine::execute() {
     while(this->nextByte < this->code.size()) {
         Byte next = this->advance();
         switch(next) {
-        case InstructionType::PRINT:
-            int64Print(this->top());
+        case InstructionType::DUPLICATE: {
+            auto a = this->pop();
+            this->push(a);
+            this->push(a);
             break;
-        case InstructionType::INT64_LOAD:
+        }
+        case InstructionType::PRINT: {
+            printMemoryCell(this->top());
+            break;
+        }
+
+        case InstructionType::INT64_LOAD: {
             // Load next integer
             this->push(int64MemoryCell((int64_t)this->advance()));
             break;
+        }
         case InstructionType::INT64_ADD: {
             auto a = this->pop(), b = this->pop();
             this->push(int64Add(b, a));
@@ -108,6 +117,62 @@ void VirtualMachine::execute() {
         case InstructionType::INT64_NOT: {
             auto a = this->pop();
             this->push(int64BitwiseNot(a));
+            break;
+        }
+        case InstructionType::INT64_SMALLER: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64Smaller(b, a));
+            break;
+        }
+        case InstructionType::INT64_SMALLER_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64SmallerEqual(b, a));
+            break;
+        }
+        case InstructionType::INT64_BIGGER: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64Bigger(b, a));
+            break;
+        }
+        case InstructionType::INT64_BIGGER_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(int64BiggerEqual(b, a));
+            break;
+        }
+
+        case InstructionType::BOOL_LOAD: {
+            this->push(boolMemoryCell((bool)this->advance()));
+            break;
+        }
+        case InstructionType::BOOL_OR: {
+            auto a = this->pop(), b = this->pop();
+            this->push(boolOr(b, a));
+            break;
+        }
+        case InstructionType::BOOL_AND: {
+            auto a = this->pop(), b = this->pop();
+            this->push(boolAnd(b, a));
+            break;
+        }
+        case InstructionType::BOOL_XOR: {
+            auto a = this->pop(), b = this->pop();
+            this->push(boolXor(b, a));
+            break;
+        }
+        case InstructionType::BOOL_NOT: {
+            auto a = this->pop();
+            this->push(boolNot(a));
+            break;
+        }
+
+        case InstructionType::BOOL_TO_INT64: {
+            auto a = this->pop();
+            this->push(boolToint64(a));
+            break;
+        }
+        case InstructionType::INT64_TO_BOOL: {
+            auto a = this->pop();
+            this->push(int64ToBool(a));
             break;
         }
         default:

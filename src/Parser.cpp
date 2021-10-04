@@ -13,7 +13,7 @@ namespace Parsing {
     }
 
 template <typename... T> 
-void ParserErrorPrint(T... t) {
+static void ParserErrorPrint(T... t) {
     (std::cerr << ... << t) << "\n";
 }
 

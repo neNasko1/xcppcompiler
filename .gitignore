@@ -1,4 +1,5 @@
 compiler
+test-suite/current-output/*
 
 # Prerequisites
 *.d

@@ -5,8 +5,12 @@
 #include <vector>
 
 #include "Lexer.h"
+#include "VirtualMachine.h"
 
 namespace Grammar {
+
+template <typename... T> 
+void GrammarBytecodeError(T... t);
 
 /**
  * @brief Abstract class implementing the expression language construct
@@ -34,6 +38,13 @@ public:
      * 
      */
     virtual ~Expression() = 0;
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    virtual void generateBytecode(std::vector<VM::Byte> &buffer) = 0;
 
     /**
      * @brief Friend function outputing contents of an expression to std::ostream
@@ -78,6 +89,13 @@ public:
      * 
      */
     ~LiteralExpression();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -126,6 +144,13 @@ public:
      * 
      */
     ~BinaryExpression();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -167,6 +192,13 @@ public:
      * 
      */
     ~UnaryExpression();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -208,6 +240,13 @@ public:
      * 
      */
     ~FunctionCall();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -237,6 +276,13 @@ public:
     virtual ~Statement() = 0;
     
     friend std::ostream& operator <<(std::ostream &os, const Statement &expr);
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    virtual void generateBytecode(std::vector<VM::Byte> &buffer) = 0;
 };
 
 class DeclarationStatement final : public Statement {
@@ -280,6 +326,13 @@ public:
      * 
      */
     ~DeclarationStatement();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -314,6 +367,13 @@ public:
      * 
      */
     ~ExpressionStatement();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -360,6 +420,13 @@ public:
     IfStatement(Expression *condition, Statement *ifBody, Statement *elseBody);
 
     ~IfStatement();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 /**
@@ -389,6 +456,13 @@ public:
      * 
      */
     ~StatementList();
+
+    /**
+     * @brief Generate virtual machine bytecode and write it to buffer
+     * 
+     * @param buffer 
+     */
+    void generateBytecode(std::vector<VM::Byte> &buffer);
 };
 
 };

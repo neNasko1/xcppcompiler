@@ -33,7 +33,7 @@ int32_t typeOfChar(const char c) {
 }
 
 template <typename... T> 
-void LexerErrorPrint(T... t) {
+static void LexerErrorPrint(T... t) {
     (std::cerr << ... << t) << "\n";
 }
 

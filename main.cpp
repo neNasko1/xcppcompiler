@@ -10,22 +10,6 @@
 #include "src/VirtualMachine.h"
 
 int main(int argc, char *argv[]) {
-    std::vector<VM::Byte> code = {
-        VM::InstructionType::INT64_LOAD, 120,
-        VM::InstructionType::INT64_LOAD, 40,
-        VM::InstructionType::INT64_LOAD, 20,
-        VM::InstructionType::INT64_DIVIDE,
-        VM::InstructionType::INT64_DIVIDE,
-        VM::InstructionType::INT64_LOAD, 59,
-        VM::InstructionType::INT64_ADD,
-        VM::InstructionType::PRINT
-    };
-
-    VM::VirtualMachine vm(code);
-    vm.execute();
-
-    return 0;
-
     if(argc == 1) {
         std::cerr << "There is no file to compile" << std::endl;
         return 0;
@@ -44,7 +28,12 @@ int main(int argc, char *argv[]) {
     Parsing::Parser parser(lexer.lexed);
     Grammar::Statement *firstLine = (Grammar::Statement*)parser.recognizeStatementList();
 
-    std::cout << (*firstLine) << std::endl;
+    std::vector<VM::Byte> code;
+
+    firstLine->generateBytecode(code);
+
+    VM::VirtualMachine vm(code);
+    vm.execute();
 
     delete firstLine;
 }

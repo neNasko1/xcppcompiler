@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "VirtualMachineOperations.h"
+#include "MemoryCell.h"
 
 namespace VM {
 
@@ -24,6 +24,7 @@ typedef int64_t Byte;
  */
 enum InstructionType : Byte {
     PRINT, 
+    DUPLICATE,
 
     INT64_LOAD, // parameters: value
     INT64_ADD,
@@ -35,6 +36,19 @@ enum InstructionType : Byte {
     INT64_AND,
     INT64_XOR,
     INT64_NOT,
+    INT64_SMALLER,
+    INT64_SMALLER_EQUAL,
+    INT64_BIGGER,
+    INT64_BIGGER_EQUAL,
+
+    BOOL_LOAD,
+    BOOL_OR,
+    BOOL_AND,
+    BOOL_XOR,
+    BOOL_NOT,
+
+    INT64_TO_BOOL,
+    BOOL_TO_INT64,
 
     SIZE
 };
