@@ -1,4 +1,5 @@
 #include <vector>
+#include <cassert>
 
 #include "Lexer.h"
 #include "Grammar.h"
@@ -277,20 +278,31 @@ void IfStatement::generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) 
 }
 
 void DeclarationStatement::generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) {
-    if(this->type == -1) {
+    if(this->expr) {
         this->expr->deduceType(ctx);
+    }
+
+    if(this->type == -1) {
+        assert(this->expr); // This is always true, because we said so in the parser
         this->type = this->expr->type;
+    }
+
+    if(this->expr->type != this->type) {
+        GrammarBytecodeError("There was a type mismatch in declaration for variable ", this->name);
     }
 
     switch(this->type) {
     case TypeIndexes::INT64: {
         auto currentVariable = ctx.addVariable(this->name, this->type);
+
+
         if(!this->expr) {
             buffer.push_back(VM::InstructionType::INT64_LOAD);
             buffer.push_back(0);
         } else {
             this->expr->generateBytecode(buffer, ctx);
         }
+
         buffer.push_back(VM::InstructionType::INT64_LOAD_INTO_STACK);
         buffer.push_back(ctx.variables[currentVariable].offset);
         break;

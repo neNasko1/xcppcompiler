@@ -89,112 +89,121 @@ void BinaryExpression::deduceType(Context &ctx) {
     if(this->left->type != this->right->type) {
         // TODO: we want operator overloading
         TypeCheckingError("Types are incompatible : ", Type::globalTypes[this->left->type].name, " ", Type::globalTypes[this->right->type].name, ": for operation ", Lexing::TokenTypeName[this->operation]);
-    }
+    }    
 
-    this->type = this->left->type;
+    auto subExprType = this->left->type;
 
     // This is a simple flag for making the code more readable
     bool isGoodOperation = false;
 
     switch(this->operation) {
     case Lexing::TokenType::PLUS: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::MINUS: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::STAR: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::SLASH: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::MODULO: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::OR: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::OROR: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::AND: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::ANDAND: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::XOR: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::XORXOR: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
-        break;
-    }
-    case Lexing::TokenType::NOT: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
-        break;
-    }
-    case Lexing::TokenType::BANG: {
-        isGoodOperation = this->type == TypeIndexes::BOOL;
+        this->type = this->left->type;
         break;
     }
     case Lexing::TokenType::EQUAL_EQUAL: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::BANG_EQUAL: {
-        switch(this->type) {
+        switch(subExprType) {
             case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
+        this->type = TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::SMALLER: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::SMALLER_EQUAL: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::BIGGER: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::BIGGER_EQUAL: {
-        isGoodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = subExprType == TypeIndexes::INT64;
+        this->type = TypeIndexes::BOOL;
         break;
     }
     }
