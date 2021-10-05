@@ -17,12 +17,20 @@ namespace VM {
 template <typename... T> 
 void VMError(T... t);
 
+/**
+ * @brief Types of variables in the virtual machine
+ * 
+ */
 enum VariableType {
     BOOL,
     INT64,
     RAW_PTR,
 };
 
+/**
+ * @brief The smallest computational unit in the virtual machine
+ * 
+ */
 class MemoryCell {
 private:
 public: 
@@ -41,7 +49,6 @@ public:
         int64_t INT64;
         uint8_t *RAW_PTR;
     } as;
-    // TODO: make this public
 
     /**
      * @brief Construct a new Memory Cell object
@@ -56,7 +63,6 @@ public:
     ~MemoryCell();
 };
 
-void memoryCellPrint(const MemoryCell &cell);
 MemoryCell int64MemoryCell(const int64_t val);
 MemoryCell boolMemoryCell(const bool val);
 MemoryCell rawptrMemoryCell(uint8_t *val);
@@ -77,6 +83,7 @@ MemoryCell memoryCellBiggerEqual(const MemoryCell &a, const MemoryCell &b);
 MemoryCell memoryCellEqual(const MemoryCell &a, const MemoryCell &b);
 MemoryCell memoryCellNotEqual(const MemoryCell &a, const MemoryCell &b);
 
+void memoryCellPrint(const MemoryCell &cell);
 void int64Print(const MemoryCell &a);
 void boolPrint(const MemoryCell &a);
 void rawptrPrint(const MemoryCell &a);
