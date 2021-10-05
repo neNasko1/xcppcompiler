@@ -18,9 +18,15 @@ void VMError(T... t) {
     exit(0);
 }
 
-VirtualMachine::VirtualMachine(std::vector<Byte> &_code) : code(_code), nextByte(0) {}
+VirtualMachine::VirtualMachine(std::vector<Byte> &_code) : code(_code), nextByte(0) {
+    // TODO: parse this from command line
+    const uint64_t STACK_SIZE = 1 << 16;
+    this->stack = (uint8_t*)malloc(STACK_SIZE);    
+}
 
-VirtualMachine::~VirtualMachine() {}
+VirtualMachine::~VirtualMachine() {
+    free(this->stack);
+}
 
 Byte VirtualMachine::peek() {
     VMError("Not enough bytes in code");
@@ -35,23 +41,23 @@ Byte VirtualMachine::advance() {
 }
 
 MemoryCell VirtualMachine::top() {
-    if(this->stack.empty()) {
-        VMError("Cannot access stack.top(), because it is empty");
+    if(this->byteStack.empty()) {
+        VMError("Cannot access byteStack.top(), because it is empty");
     }
-    return this->stack.back();
+    return this->byteStack.back();
 }
 
 MemoryCell VirtualMachine::pop() {
-    if(this->stack.empty()) {
-        VMError("Cannot pop from stack, because it is empty");
+    if(this->byteStack.empty()) {
+        VMError("Cannot pop from byteStack, because it is empty");
     }
-    MemoryCell value = this->stack.back();
-    this->stack.pop_back();
+    MemoryCell value = this->byteStack.back();
+    this->byteStack.pop_back();
     return value;
 }
 
 void VirtualMachine::push(const MemoryCell &cell) {
-    this->stack.push_back(cell);
+    this->byteStack.push_back(cell);
 }
 
 void VirtualMachine::execute() {
@@ -193,6 +199,27 @@ void VirtualMachine::execute() {
         case InstructionType::INT64_TO_BOOL: {
             auto a = this->pop();
             this->push(int64ToBool(a));
+            break;
+        }
+
+        case InstructionType::INT64_LOAD_FROM_STACK: { // Requires address to get from
+            uint64_t val = *(int64_t*)(this->stack + this->advance());
+            this->push(int64MemoryCell(val));
+            break;
+        }
+        case InstructionType::BOOL_LOAD_FROM_STACK: { // Requires address to get from
+            uint64_t val = *(bool*)(this->stack + this->advance());
+            this->push(int64MemoryCell(val));
+            break;
+        }
+        case InstructionType::INT64_LOAD_INTO_STACK: { // Requires address to store into
+            auto a = this->pop();
+            *(int64_t*)(this->stack + this->advance()) = a.as.INT64;
+            break;
+        }
+        case InstructionType::BOOL_LOAD_INTO_STACK: { // Requires address to store into
+            auto a = this->pop();
+            *(bool*)(this->stack + this->advance()) = a.as.BOOL;
             break;
         }
         default:

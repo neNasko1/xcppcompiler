@@ -49,7 +49,7 @@ const std::string TokenTypeName[TokenType::size] = {
     ",", ";", ".", ":", "?",
     "{", "}", "(", ")", "[", "]",
     "character", "number", "boolean", "string", "name",
-    "EOF"
+    "EOF",
 };
 
 /**

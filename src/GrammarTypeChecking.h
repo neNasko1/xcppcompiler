@@ -47,7 +47,7 @@ public:
      * @brief A map which helps to find which type you are looking at
      * 
      */
-    static std::map<std::string, Type*> typeMapping;
+    static std::map<std::string, uint64_t> typeMapping;
 
     /**
      * @brief Construct a new Type object
@@ -71,13 +71,13 @@ public:
      * @param name 
      * @return Type 
      */
-    static Type* addType(const uint64_t size, const std::string &name);
+    static uint64_t addType(const uint64_t size, const std::string &name);
 
     /**
      * @brief Find an existing type in the global type list
      * 
      */
-    static Type* findType(const std::string &name);
+    static uint64_t findType(const std::string &name);
 };
 
 // Initialize with some types

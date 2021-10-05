@@ -7,6 +7,7 @@
 #include "Lexer.h"
 #include "VirtualMachine.h"
 #include "GrammarTypeChecking.h"
+#include "GrammarBytecode.h"
 
 namespace Grammar {
 
@@ -38,7 +39,7 @@ public:
      * @brief Return value type
      * 
      */
-    Type *type;
+    uint64_t type;
 
     /**
      * @brief Destroy the Expression object
@@ -51,13 +52,13 @@ public:
      * 
      * @param buffer 
      */
-    virtual void generateBytecode(std::vector<VM::Byte> &buffer) const = 0;
+    virtual void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) = 0;
 
     /**
      * @brief Deduce return type of expression
      * 
      */
-    virtual void deduceType() = 0;
+    virtual void deduceType(Context &ctx) = 0;
 
     /**
      * @brief Friend function outputing contents of an expression to std::ostream
@@ -108,13 +109,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
      * 
      */
-    void deduceType();
+    void deduceType(Context &ctx);
 };
 
 /**
@@ -169,13 +170,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
      * 
      */
-    void deduceType();
+    void deduceType(Context &ctx);
 };
 
 /**
@@ -223,13 +224,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
      * 
      */
-    void deduceType();
+    void deduceType(Context &ctx);
 };
 
 /**
@@ -277,13 +278,13 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
      * 
      */
-    void deduceType();
+    void deduceType(Context &ctx);
 };
 
 /**
@@ -319,7 +320,7 @@ public:
      * 
      * @param buffer 
      */
-    virtual void generateBytecode(std::vector<VM::Byte> &buffer) const = 0;
+    virtual void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) = 0;
 };
 
 class DeclarationStatement final : public Statement {
@@ -342,7 +343,7 @@ public:
      * @brief Variable type
      * 
      */
-    std::string type;
+    const uint64_t type;
 
     /**
      * @brief Initialization value
@@ -356,7 +357,7 @@ public:
      * @param _name 
      * @param _expr 
      */
-    DeclarationStatement(const std::string &_name, const std::string &_type = "", Expression *_expr = nullptr);
+    DeclarationStatement(const std::string &_name, const uint64_t _type = -1, Expression *_expr = nullptr);
 
     /**
      * @brief Destroy the Declaration Statement object
@@ -369,7 +370,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 };
 
 /**
@@ -410,7 +411,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 };
 
 /**
@@ -463,7 +464,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 };
 
 /**
@@ -499,7 +500,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer) const;
+    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
 };
 
 };

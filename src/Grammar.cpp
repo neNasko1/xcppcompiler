@@ -4,7 +4,7 @@
 
 namespace Grammar {
 
-Expression::Expression() : type(nullptr) {}
+Expression::Expression() : type(-1) {}
 
 Expression::~Expression() {}
 
@@ -14,7 +14,7 @@ std::ostream& operator <<(std::ostream &os, const Expression &expr) {
 
 
 LiteralExpression::LiteralExpression(const Lexing::Token &_value) : value(_value) {
-    this->deduceType();
+    
 }
 
 LiteralExpression::~LiteralExpression() {}
@@ -29,7 +29,7 @@ std::ostream& LiteralExpression::hiddenPrint(std::ostream &os) const {
 
 BinaryExpression::BinaryExpression(Expression *_left, const Lexing::TokenType &_operation, Expression *_right) 
     : left(_left), operation(_operation), right(_right) {
-    this->deduceType();
+    
 }
 
 BinaryExpression::~BinaryExpression() {
@@ -60,7 +60,7 @@ std::ostream& BinaryExpression::hiddenPrint(std::ostream &os) const {
 
 
 UnaryExpression::UnaryExpression(const Lexing::TokenType &_operation, Expression *_expr) : operation(_operation), expr(_expr) {
-    this->deduceType();
+    
 }
 
 UnaryExpression::~UnaryExpression() {
@@ -88,7 +88,7 @@ std::ostream& UnaryExpression::hiddenPrint(std::ostream &os) const {
 
 
 FunctionCall::FunctionCall(std::string _name, std::vector<Expression*> &_parameters) : name(_name), parameters(_parameters) {
-    this->deduceType();
+    
 } 
 
 FunctionCall::~FunctionCall() {
@@ -149,7 +149,7 @@ std::ostream& ExpressionStatement::hiddenPrint(std::ostream &os) const {
 }
 
 
-DeclarationStatement::DeclarationStatement(const std::string &_name, const std::string &_type, Expression *_expr) : name(_name), type(_type), expr(_expr) {}
+DeclarationStatement::DeclarationStatement(const std::string &_name, const uint64_t _type, Expression *_expr) : name(_name), type(_type), expr(_expr) {}
 
 DeclarationStatement::~DeclarationStatement() {
     delete this->expr;

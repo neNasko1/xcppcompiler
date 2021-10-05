@@ -16,7 +16,7 @@ static void TypeCheckingErrorPrint(T... t) {
 
 template <typename... T> 
 void TypeCheckingError(T... t) {
-    std::cerr << "There was an error while VM code was being generated " << "\n";
+    std::cerr << "There was a type mismatch error while VM code was being generated " << "\n";
     TypeCheckingErrorPrint(t...);
     exit(0);
 }
@@ -24,18 +24,20 @@ void TypeCheckingError(T... t) {
 Type::~Type() {}
 Type::Type(const uint64_t _size, const int32_t _index, const std::string &_name) : size(_size), index(_index), name(_name) {}
 
-Type* Type::addType(const uint64_t _size, const std::string &_name) {
+uint64_t Type::addType(const uint64_t _size, const std::string &_name) {
     Type::globalTypes.push_back(Type(_size, Type::globalTypes.size(), _name));
-    return &(globalTypes.back());
+    Type::typeMapping[_name] = Type::globalTypes.size() - 1;
+
+    return Type::globalTypes.size() - 1;
 }
 
 
-Type* Type::findType(const std::string &name) {
+uint64_t Type::findType(const std::string &name) {
     auto ptrToType = Type::typeMapping.find(name);
     if(ptrToType == Type::typeMapping.end()) {
         // Not in map
         TypeCheckingError("Type not found: ", name);
-        return nullptr;
+        return -1;
     } else {
         return ptrToType->second;
     }
@@ -47,24 +49,29 @@ std::vector<Type> Type::globalTypes = {
     Type(0, 2,  "void"), 
 };
 
-std::map<std::string, Type*> Type::typeMapping = {
-    { "bool", &(Type::globalTypes[0])},
-    {"int64", &(Type::globalTypes[1])},
-    { "void", &(Type::globalTypes[2])}
+std::map<std::string, uint64_t> Type::typeMapping = {
+    { "bool", 0},
+    {"int64", 1},
+    { "void", 2}
 };
 
 
-void LiteralExpression::deduceType() {
-    if(this->type != nullptr) {return;}
+void LiteralExpression::deduceType(Context &ctx) {
+    if(this->type != -1) {return;}
     
     switch(this->value.type) {  
     // TODO: optimize
     case Lexing::TokenType::NUMBER: {
-        this->type = Type::findType(std::string("int64"));
+        this->type = TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BOOLEAN: {
-        this->type = Type::findType(std::string("bool"));
+        this->type = TypeIndexes::BOOL;
+        break;
+    }
+    case Lexing::TokenType::NAME: {
+        auto varIndex = ctx.findVariable(this->value.lexeme);
+        this->type = ctx.variables[varIndex].type;
         break;
     }
     default:{
@@ -73,15 +80,15 @@ void LiteralExpression::deduceType() {
     }
 }
 
-void BinaryExpression::deduceType() {
-    if(this->type != nullptr) {return;}
+void BinaryExpression::deduceType(Context &ctx) {
+    if(this->type != -1) {return;}
 
-    this->left->deduceType();
-    this->right->deduceType();
+    this->left->deduceType(ctx);
+    this->right->deduceType(ctx);
 
-    if(this->left->type->index != this->right->type->index) {
+    if(this->left->type != this->right->type) {
         // TODO: we want operator overloading
-        TypeCheckingError("Types are incompatible : ", this->left->type->name, " ", this->right->type->name, ": for operation ", Lexing::TokenTypeName[this->operation]);
+        TypeCheckingError("Types are incompatible : ", Type::globalTypes[this->left->type].name, " ", Type::globalTypes[this->right->type].name, ": for operation ", Lexing::TokenTypeName[this->operation]);
     }
 
     this->type = this->left->type;
@@ -91,103 +98,103 @@ void BinaryExpression::deduceType() {
 
     switch(this->operation) {
     case Lexing::TokenType::PLUS: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::MINUS: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::STAR: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::SLASH: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::MODULO: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::OR: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::OROR: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::AND: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::ANDAND: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::XOR: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::XORXOR: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::NOT: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BANG: {
-        goodOperation = this->type->index == TypeIndexes::BOOL;
+        goodOperation = this->type == TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::EQUAL_EQUAL: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::BANG_EQUAL: {
-        switch(this->type->index) {
+        switch(this->type) {
             case Grammar::TypeIndexes::INT64: goodOperation = true; break;
             case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::SMALLER: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::SMALLER_EQUAL: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BIGGER: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BIGGER_EQUAL: {
-        goodOperation = this->type->index == TypeIndexes::INT64;
+        goodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     }
@@ -197,47 +204,47 @@ void BinaryExpression::deduceType() {
     }
 }
 
-void UnaryExpression::deduceType() {
-    if(this->type != nullptr) {return;}
+void UnaryExpression::deduceType(Context &ctx) {
+    if(this->type != -1) {return;}
 
-    this->expr->deduceType();
+    this->expr->deduceType(ctx);
 
     this->type = this->expr->type;
 }
 
-void FunctionCall::deduceType() {
-    if(this->type != nullptr) {return;}
+void FunctionCall::deduceType(Context &ctx) {
+    if(this->type != -1) {return;}
 
     // TODO handle functions better
 
     if(this->name == "print") {
-        this->type = &(Type::globalTypes[TypeIndexes::VOID]);
+        this->type = TypeIndexes::VOID;
     } else if(this->name == "int64") {
 
         if(this->parameters.size() != 1) {
             TypeCheckingError("int64 cast was given wrong number of parameters: ", this->parameters.size());
         }
-        this->parameters[0]->deduceType();
+        this->parameters[0]->deduceType(ctx);
 
-        if(this->parameters[0]->type->index != TypeIndexes::BOOL) {
+        if(this->parameters[0]->type != TypeIndexes::BOOL) {
             TypeCheckingError("Currently not supporting overloading");
         }
 
-        this->type = &(Type::globalTypes[TypeIndexes::INT64]);        
+        this->type = TypeIndexes::INT64;        
     } else if(this->name == "bool") {
 
         if(this->parameters.size() != 1) {
             TypeCheckingError("bool cast was given wrong number of parameters: ", this->parameters.size());
         }
-        this->parameters[0]->deduceType();
+        this->parameters[0]->deduceType(ctx);
 
-        if(this->parameters[0]->type->index != TypeIndexes::INT64) {
+        if(this->parameters[0]->type != TypeIndexes::INT64) {
             TypeCheckingError("Currently not supporting overloading");
         }
 
-        this->type = &(Type::globalTypes[TypeIndexes::BOOL]);        
+        this->type = TypeIndexes::BOOL;        
     } else {
-        GrammarBytecodeError("Function call type checking failed: only intrinsic functions are currently handled");
+        TypeCheckingError("Function call type checking failed: only intrinsic functions are currently handled");
     }
 }
 

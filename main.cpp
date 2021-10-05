@@ -30,7 +30,9 @@ int main(int argc, char *argv[]) {
 
     std::vector<VM::Byte> code;
 
-    firstLine->generateBytecode(code);
+    Grammar::Context ctx;
+
+    firstLine->generateBytecode(code, ctx);
 
     VM::VirtualMachine vm(code);
     vm.execute();

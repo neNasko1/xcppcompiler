@@ -267,7 +267,7 @@ Grammar::Statement *Parser::recognizeDeclarationStatement() {
         ParserError("TODO - variable declaration cannot deduce variable type from expression type");
     }
 
-    return new Grammar::DeclarationStatement(name, type, expr);
+    return new Grammar::DeclarationStatement(name, Grammar::Type::findType(type), expr);
 }
 
 Grammar::Statement *Parser::recognizeExpressionStatement() {

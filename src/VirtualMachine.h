@@ -54,41 +54,52 @@ enum InstructionType : Byte {
     INT64_TO_BOOL,
     BOOL_TO_INT64,
 
+    INT64_LOAD_FROM_STACK,
+    INT64_LOAD_INTO_STACK,
+    BOOL_LOAD_FROM_STACK,
+    BOOL_LOAD_INTO_STACK,
+
     SIZE
 };
 
 class VirtualMachine {
 private:
     /**
-        * @brief Memory stack
-        * 
-        */
-    std::vector<MemoryCell> stack;
+     * @brief Stack memory - currently statically alocated memory used for storing variables
+     * 
+     */
+    uint8_t *stack;
 
     /**
-        * @brief Bytecode
-        * 
-        */
+     * @brief Stack which emulates 3 register operations
+     * 
+     */
+    std::vector<MemoryCell> byteStack;
+
+    /**
+     * @brief Bytecode
+     * 
+     */
     std::vector<Byte> code;
 
     /**
-        * @brief Next byte
-        * 
-        */
+     * @brief Next byte
+     * 
+     */
     uint64_t nextByte;
 
     /**
-        * @brief Peek at next byte in code
-        * 
-        * @return Byte 
-        */
+     * @brief Peek at next byte in code
+     * 
+     * @return Byte 
+    */
     Byte peek();
 
     /**
-        * @brief Get next byte and advance
-        * 
-        * @return Byte 
-        */
+     * @brief Get next byte and advance
+     * 
+     * @return Byte 
+     */
     Byte advance();
 
     /**
