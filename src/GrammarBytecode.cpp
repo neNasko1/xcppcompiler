@@ -217,7 +217,28 @@ void BinaryExpression::generateBytecode(std::vector<VM::Byte> &buffer, Context &
 void UnaryExpression::generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) {
     this->deduceType(ctx);
 
-    GrammarBytecodeError("Unary expression bytecode generation is not currently supported");
+    this->expr->generateBytecode(buffer, ctx);
+
+    switch(this->operation) {
+    case Lexing::TokenType::UNARY_PLUS: {
+        break;
+    }
+    case Lexing::TokenType::UNARY_MINUS: {
+        buffer.push_back(VM::InstructionType::INT64_NEGATE);
+        break;
+    }
+    case Lexing::TokenType::NOT: {
+        buffer.push_back(VM::InstructionType::INT64_NOT);
+        break;
+    }
+    case Lexing::TokenType::BANG: {
+        buffer.push_back(VM::InstructionType::BOOL_NOT);
+        break;
+    }
+    default: {
+        GrammarBytecodeError("Unary operation ", Lexing::TokenTypeName[this->operation], " is currently not supported");
+    }
+    }
 }
 
 void FunctionCall::generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) {
@@ -256,6 +277,11 @@ void IfStatement::generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) 
 }
 
 void DeclarationStatement::generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) {
+    if(this->type == -1) {
+        this->expr->deduceType(ctx);
+        this->type = this->expr->type;
+    }
+
     switch(this->type) {
     case TypeIndexes::INT64: {
         auto currentVariable = ctx.addVariable(this->name, this->type);

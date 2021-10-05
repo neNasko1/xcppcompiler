@@ -90,6 +90,11 @@ void VirtualMachine::execute() {
             this->push(int64Subtract(b, a));
             break;
         }
+        case InstructionType::INT64_NEGATE: {
+            auto a = this->pop(), b = int64MemoryCell(0);
+            this->push(int64Subtract(b, a));
+            break;
+        }
         case InstructionType::INT64_MULTIPLY: {
             auto a = this->pop(), b = this->pop();
             this->push(int64Multiply(b, a));

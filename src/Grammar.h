@@ -343,7 +343,7 @@ public:
      * @brief Variable type
      * 
      */
-    const uint64_t type;
+    uint64_t type;
 
     /**
      * @brief Initialization value

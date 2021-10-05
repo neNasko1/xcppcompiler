@@ -94,112 +94,112 @@ void BinaryExpression::deduceType(Context &ctx) {
     this->type = this->left->type;
 
     // This is a simple flag for making the code more readable
-    bool goodOperation = false;
+    bool isGoodOperation = false;
 
     switch(this->operation) {
     case Lexing::TokenType::PLUS: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::MINUS: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::STAR: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::SLASH: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::MODULO: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::OR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::OROR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::AND: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::ANDAND: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::XOR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::XORXOR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::NOT: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BANG: {
-        goodOperation = this->type == TypeIndexes::BOOL;
+        isGoodOperation = this->type == TypeIndexes::BOOL;
         break;
     }
     case Lexing::TokenType::EQUAL_EQUAL: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::BANG_EQUAL: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: goodOperation = true; break;
-            case Grammar::TypeIndexes::BOOL: goodOperation = true; break;
+            case Grammar::TypeIndexes::INT64: isGoodOperation = true; break;
+            case Grammar::TypeIndexes::BOOL: isGoodOperation = true; break;
         }
         break;
     }
     case Lexing::TokenType::SMALLER: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::SMALLER_EQUAL: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BIGGER: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     case Lexing::TokenType::BIGGER_EQUAL: {
-        goodOperation = this->type == TypeIndexes::INT64;
+        isGoodOperation = this->type == TypeIndexes::INT64;
         break;
     }
     }
 
-    if(!goodOperation) {
+    if(!isGoodOperation) {
         TypeCheckingError("Types are not compatible for operation: ", Lexing::TokenTypeName[this->operation]);
     }
 }
@@ -210,6 +210,34 @@ void UnaryExpression::deduceType(Context &ctx) {
     this->expr->deduceType(ctx);
 
     this->type = this->expr->type;
+
+    bool isGoodOperation = false;
+
+    switch(this->operation) {
+    case Lexing::TokenType::UNARY_PLUS: {
+        isGoodOperation = this->type == TypeIndexes::INT64;
+        break;
+    }
+    case Lexing::TokenType::UNARY_MINUS: {
+        isGoodOperation = this->type == TypeIndexes::INT64;
+        break;
+    }
+    case Lexing::TokenType::NOT: {
+        isGoodOperation = this->type == TypeIndexes::INT64;
+        break;
+    }
+    case Lexing::TokenType::BANG: {
+        isGoodOperation = this->type == TypeIndexes::BOOL;
+        break;
+    }
+    default: {
+        TypeCheckingError("Unary operation ", Lexing::TokenTypeName[this->operation], " is currently not supported");
+    }
+    }
+
+    if(!isGoodOperation) {
+        TypeCheckingError("Types are not compatible for operation: ", Lexing::TokenTypeName[this->operation]);
+    }
 }
 
 void FunctionCall::deduceType(Context &ctx) {

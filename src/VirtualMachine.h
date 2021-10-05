@@ -29,6 +29,7 @@ enum InstructionType : Byte {
     INT64_LOAD, // parameters: value
     INT64_ADD,
     INT64_SUBTRACT,
+    INT64_NEGATE,
     INT64_MULTIPLY,
     INT64_DIVIDE,
     INT64_MODULO,

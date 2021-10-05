@@ -238,7 +238,7 @@ Grammar::Expression *Parser::recognizeExpression() {
 Grammar::Statement *Parser::recognizeDeclarationStatement() {
     HARD_MATCH(Lexing::TokenType::VAR);
     std::string name = "";
-    std::string type = "";
+    uint64_t type = -1;
     Grammar::Expression *expr = nullptr;
 
     if(this->peek().type != Lexing::TokenType::NAME) {
@@ -250,13 +250,16 @@ Grammar::Statement *Parser::recognizeDeclarationStatement() {
         if(this->peek().type != Lexing::TokenType::NAME) {
             ParserError("Unexpected token in variable declaration \n", this->peek(), "when expecting variable type ");
         } 
-        type = this->advance().lexeme;        
+
+        // We have to figure out the type in the type system
+        type = Grammar::Type::findType(this->advance().lexeme);        
 
         if(isSeparatorToken(this->peek())) {
             // All is good we are ready to return to continue
             this->advance();
         } else {
             HARD_MATCH(Lexing::TokenType::EQUAL);
+
             expr = this->recognizeExpression();
             if(!isSeparatorToken(this->peek())) {
                 ParserError("Unexpected token in variable declaration \n", this->peek(), "when expecting variable declaration termination");
@@ -264,10 +267,21 @@ Grammar::Statement *Parser::recognizeDeclarationStatement() {
             this->advance();
         }
     } else {
-        ParserError("TODO - variable declaration cannot deduce variable type from expression type");
+        // We have to deduce variable type from the expression:
+        HARD_MATCH(Lexing::TokenType::EQUAL);
+
+        // Then we have to recognize the expression
+        expr = this->recognizeExpression();
+
+        if(!isSeparatorToken(this->peek())) {
+            ParserError("Unexpected token in variable declaration \n", this->peek(), "when expecting variable declaration termination");
+        }
+        this->advance();
+
+        type = -1;    
     }
 
-    return new Grammar::DeclarationStatement(name, Grammar::Type::findType(type), expr);
+    return new Grammar::DeclarationStatement(name, type, expr);
 }
 
 Grammar::Statement *Parser::recognizeExpressionStatement() {
