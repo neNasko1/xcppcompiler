@@ -25,40 +25,36 @@ typedef int64_t Byte;
 enum InstructionType : Byte {
     PRINT, 
     DUPLICATE,
+    SWAP,
 
-    INT64_LOAD, // parameters: value
-    INT64_ADD,
-    INT64_SUBTRACT,
-    INT64_NEGATE,
-    INT64_MULTIPLY,
-    INT64_DIVIDE,
-    INT64_MODULO,
-    INT64_OR,
-    INT64_AND,
-    INT64_XOR,
-    INT64_NOT,
-    INT64_SMALLER,
-    INT64_SMALLER_EQUAL,
-    INT64_BIGGER,
-    INT64_BIGGER_EQUAL,
-    INT64_EQUAL,
-    INT64_NOT_EQUAL,
-
+    ADD,
+    SUBTRACT,
+    NEGATE,
+    MULTIPLY,
+    DIVIDE,
+    MODULO,
+    OR,
+    AND,
+    XOR,
+    NOT,
+    SMALLER,
+    SMALLER_EQUAL,
+    BIGGER,
+    BIGGER_EQUAL,
+    EQUAL,
+    NOT_EQUAL,
+    
+    INT64_LOAD,
     BOOL_LOAD,
-    BOOL_OR,
-    BOOL_AND,
-    BOOL_XOR,
-    BOOL_NOT,
-    BOOL_EQUAL,
-    BOOL_NOT_EQUAL,
+    STACK_PTR_LOAD,
 
     INT64_TO_BOOL,
     BOOL_TO_INT64,
 
-    INT64_LOAD_FROM_STACK,
-    INT64_LOAD_INTO_STACK,
-    BOOL_LOAD_FROM_STACK,
-    BOOL_LOAD_INTO_STACK,
+    INT64_LOAD_FROM_ADDRESS,
+    INT64_LOAD_INTO_ADDRESS,
+    BOOL_LOAD_FROM_ADDRESS,
+    BOOL_LOAD_INTO_ADDRESS,
 
     SIZE
 };
@@ -72,7 +68,7 @@ private:
     uint8_t *stack;
 
     /**
-     * @brief Stack which emulates 3 register operations
+     * @brief Stack which emulates 2 register operations
      * 
      */
     std::vector<MemoryCell> byteStack;

@@ -63,6 +63,7 @@ void VirtualMachine::push(const MemoryCell &cell) {
 void VirtualMachine::execute() {
     while(this->nextByte < this->code.size()) {
         Byte next = this->advance();
+
         switch(next) {
         case InstructionType::DUPLICATE: {
             auto a = this->pop();
@@ -71,128 +72,110 @@ void VirtualMachine::execute() {
             break;
         }
         case InstructionType::PRINT: {
-            printMemoryCell(this->top());
+            memoryCellPrint(this->top());
+            break;
+        }
+        case InstructionType::SWAP: {
+            auto a = this->pop();
+            auto b = this->pop();
+            this->push(a);
+            this->push(b);
             break;
         }
 
+        case InstructionType::ADD: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellAdd(b, a));
+            break;
+        }
+        case InstructionType::SUBTRACT: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellSubtract(b, a));
+            break;
+        }
+        case InstructionType::NEGATE: {
+            auto a = this->pop(), b = int64MemoryCell(0);
+            this->push(memoryCellSubtract(b, a));
+            break;
+        }
+        case InstructionType::MULTIPLY: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellMultiply(b, a));
+            break;
+        }
+        case InstructionType::DIVIDE: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellDivide(b, a));
+            break;
+        }
+        case InstructionType::MODULO: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellModulo(b, a));
+            break;
+        }
+        case InstructionType::OR: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellOr(b, a));
+            break;
+        }
+        case InstructionType::AND: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellAnd(b, a));
+            break;
+        }
+        case InstructionType::XOR: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellXor(b, a));
+            break;
+        }
+        case InstructionType::NOT: {
+            auto a = this->pop();
+            this->push(memoryCellNot(a));
+            break;
+        }
+        case InstructionType::SMALLER: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellSmaller(b, a));
+            break;
+        }
+        case InstructionType::SMALLER_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellSmallerEqual(b, a));
+            break;
+        }
+        case InstructionType::BIGGER: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellBigger(b, a));
+            break;
+        }
+        case InstructionType::BIGGER_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellBiggerEqual(b, a));
+            break;
+        }
+        case InstructionType::EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellEqual(b, a));
+            break;
+        }
+        case InstructionType::NOT_EQUAL: {
+            auto a = this->pop(), b = this->pop();
+            this->push(memoryCellNotEqual(b, a));
+            break;
+        }
+
+        case InstructionType::STACK_PTR_LOAD: { // This needs offset 
+            auto offset = this->pop();
+            this->push(rawptrMemoryCell(this->stack + offset.as.INT64));
+            break;
+        }   
         case InstructionType::INT64_LOAD: {
             // Load next integer
             this->push(int64MemoryCell((int64_t)this->advance()));
             break;
         }
-        case InstructionType::INT64_ADD: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Add(b, a));
-            break;
-        }
-        case InstructionType::INT64_SUBTRACT: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Subtract(b, a));
-            break;
-        }
-        case InstructionType::INT64_NEGATE: {
-            auto a = this->pop(), b = int64MemoryCell(0);
-            this->push(int64Subtract(b, a));
-            break;
-        }
-        case InstructionType::INT64_MULTIPLY: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Multiply(b, a));
-            break;
-        }
-        case InstructionType::INT64_DIVIDE: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Divide(b, a));
-            break;
-        }
-        case InstructionType::INT64_MODULO: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Modulo(b, a));
-            break;
-        }
-        case InstructionType::INT64_OR: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Or(b, a));
-            break;
-        }
-        case InstructionType::INT64_AND: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64And(b, a));
-            break;
-        }
-        case InstructionType::INT64_XOR: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Xor(b, a));
-            break;
-        }
-        case InstructionType::INT64_NOT: {
-            auto a = this->pop();
-            this->push(int64BitwiseNot(a));
-            break;
-        }
-        case InstructionType::INT64_SMALLER: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Smaller(b, a));
-            break;
-        }
-        case InstructionType::INT64_SMALLER_EQUAL: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64SmallerEqual(b, a));
-            break;
-        }
-        case InstructionType::INT64_BIGGER: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Bigger(b, a));
-            break;
-        }
-        case InstructionType::INT64_BIGGER_EQUAL: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64BiggerEqual(b, a));
-            break;
-        }
-        case InstructionType::INT64_EQUAL: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64Equal(b, a));
-            break;
-        }
-        case InstructionType::INT64_NOT_EQUAL: {
-            auto a = this->pop(), b = this->pop();
-            this->push(int64NotEqual(b, a));
-            break;
-        }
-
         case InstructionType::BOOL_LOAD: {
             this->push(boolMemoryCell((bool)this->advance()));
-            break;
-        }
-        case InstructionType::BOOL_OR: {
-            auto a = this->pop(), b = this->pop();
-            this->push(boolOr(b, a));
-            break;
-        }
-        case InstructionType::BOOL_AND: {
-            auto a = this->pop(), b = this->pop();
-            this->push(boolAnd(b, a));
-            break;
-        }
-        case InstructionType::BOOL_XOR: {
-            auto a = this->pop(), b = this->pop();
-            this->push(boolXor(b, a));
-            break;
-        }
-        case InstructionType::BOOL_NOT: {
-            auto a = this->pop();
-            this->push(boolNot(a));
-            break;
-        }
-        case InstructionType::BOOL_EQUAL: {
-            auto a = this->pop(), b = this->pop();
-            this->push(boolEqual(b, a));
-            break;
-        }
-        case InstructionType::BOOL_NOT_EQUAL: {
-            auto a = this->pop(), b = this->pop();
-            this->push(boolNotEqual(b, a));
             break;
         }
 
@@ -207,24 +190,28 @@ void VirtualMachine::execute() {
             break;
         }
 
-        case InstructionType::INT64_LOAD_FROM_STACK: { // Requires address to get from
-            uint64_t val = *(int64_t*)(this->stack + this->advance());
+        case InstructionType::INT64_LOAD_FROM_ADDRESS: { // Requires address to get from
+            auto address = this->pop();
+            uint64_t val = *(int64_t*)(address.as.RAW_PTR);
             this->push(int64MemoryCell(val));
             break;
         }
-        case InstructionType::BOOL_LOAD_FROM_STACK: { // Requires address to get from
-            uint64_t val = *(bool*)(this->stack + this->advance());
-            this->push(int64MemoryCell(val));
+        case InstructionType::BOOL_LOAD_FROM_ADDRESS: { // Requires address to get from
+            auto address = this->pop();
+            bool val = *(bool*)(address.as.RAW_PTR);
+            this->push(boolMemoryCell(val));
             break;
         }
-        case InstructionType::INT64_LOAD_INTO_STACK: { // Requires address to store into
+        case InstructionType::INT64_LOAD_INTO_ADDRESS: { // Requires address to store into
+            auto address = this->pop();
             auto a = this->pop();
-            *(int64_t*)(this->stack + this->advance()) = a.as.INT64;
+            *(int64_t*)(address.as.RAW_PTR) = a.as.INT64;
             break;
         }
-        case InstructionType::BOOL_LOAD_INTO_STACK: { // Requires address to store into
+        case InstructionType::BOOL_LOAD_INTO_ADDRESS: { // Requires address to store into
+            auto address = this->pop();
             auto a = this->pop();
-            *(bool*)(this->stack + this->advance()) = a.as.BOOL;
+            *(bool*)(address.as.RAW_PTR) = a.as.BOOL;
             break;
         }
         default:

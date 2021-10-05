@@ -3,6 +3,7 @@
 #define VIRTUAL_MACHINE_OPERATIONS_H
 
 #include <iostream>
+#include <cassert>
 
 #include "VirtualMachine.h"
 
@@ -17,8 +18,9 @@ template <typename... T>
 void VMError(T... t);
 
 enum VariableType {
+    BOOL,
     INT64,
-    BOOL
+    RAW_PTR,
 };
 
 class MemoryCell {
@@ -35,8 +37,9 @@ public:
      * 
      */
     union {
-        int64_t INT64;
         bool BOOL;
+        int64_t INT64;
+        uint8_t *RAW_PTR;
     } as;
     // TODO: make this public
 
@@ -53,34 +56,30 @@ public:
     ~MemoryCell();
 };
 
-void printMemoryCell(const MemoryCell &cell);
+void memoryCellPrint(const MemoryCell &cell);
 MemoryCell int64MemoryCell(const int64_t val);
 MemoryCell boolMemoryCell(const bool val);
+MemoryCell rawptrMemoryCell(uint8_t *val);
 
-MemoryCell int64Add(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64Subtract(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64Multiply(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64Divide(const MemoryCell &a, const MemoryCell &b);  
-MemoryCell int64Modulo(const MemoryCell &a, const MemoryCell &b);  
-MemoryCell int64Or(const MemoryCell &a, const MemoryCell &b);  
-MemoryCell int64And(const MemoryCell &a, const MemoryCell &b);  
-MemoryCell int64Xor(const MemoryCell &a, const MemoryCell &b);  
-MemoryCell int64BitwiseNot(const MemoryCell &a);  
-MemoryCell int64Smaller(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64SmallerEqual(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64Bigger(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64BiggerEqual(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64Equal(const MemoryCell &a, const MemoryCell &b);
-MemoryCell int64NotEqual(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellAdd(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellSubtract(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellMultiply(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellDivide(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellModulo(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellOr(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellAnd(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellXor(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellNot(const MemoryCell &a);
+MemoryCell memoryCellSmaller(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellSmallerEqual(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellBigger(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellBiggerEqual(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellEqual(const MemoryCell &a, const MemoryCell &b);
+MemoryCell memoryCellNotEqual(const MemoryCell &a, const MemoryCell &b);
+
 void int64Print(const MemoryCell &a);
-
-MemoryCell boolOr(const MemoryCell &a, const MemoryCell &b);
-MemoryCell boolAnd(const MemoryCell &a, const MemoryCell &b);
-MemoryCell boolXor(const MemoryCell &a, const MemoryCell &b);
-MemoryCell boolNot(const MemoryCell &a);
-MemoryCell boolEqual(const MemoryCell &a, const MemoryCell &b);
-MemoryCell boolNotEqual(const MemoryCell &a, const MemoryCell &b);
 void boolPrint(const MemoryCell &a);
+void rawptrPrint(const MemoryCell &a);
 
 MemoryCell int64ToBool(const MemoryCell &a);
 MemoryCell boolToint64(const MemoryCell &a);

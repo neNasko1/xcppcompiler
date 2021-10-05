@@ -82,13 +82,17 @@ void LiteralExpression::generateBytecode(std::vector<VM::Byte> &buffer, Context 
         auto currentVariable = ctx.findVariable(this->value.lexeme);
         switch(ctx.variables[currentVariable].type) {
         case TypeIndexes::INT64: {
-            buffer.push_back(VM::InstructionType::INT64_LOAD_FROM_STACK);
+            buffer.push_back(VM::InstructionType::INT64_LOAD);
             buffer.push_back(ctx.variables[currentVariable].offset);
+            buffer.push_back(VM::InstructionType::STACK_PTR_LOAD);
+            buffer.push_back(VM::InstructionType::INT64_LOAD_FROM_ADDRESS);
             break;
         }
         case TypeIndexes::BOOL: {
-            buffer.push_back(VM::InstructionType::BOOL_LOAD_FROM_STACK);
+            buffer.push_back(VM::InstructionType::INT64_LOAD);
             buffer.push_back(ctx.variables[currentVariable].offset);
+            buffer.push_back(VM::InstructionType::STACK_PTR_LOAD);
+            buffer.push_back(VM::InstructionType::BOOL_LOAD_FROM_ADDRESS);
             break;
         }
         default: {
@@ -113,103 +117,103 @@ void BinaryExpression::generateBytecode(std::vector<VM::Byte> &buffer, Context &
 
     switch(this->operation) {
     case Lexing::TokenType::PLUS: {
-        buffer.push_back(VM::InstructionType::INT64_ADD);
+        buffer.push_back(VM::InstructionType::ADD);
         break;
     }
     case Lexing::TokenType::MINUS: {
-        buffer.push_back(VM::InstructionType::INT64_SUBTRACT);
+        buffer.push_back(VM::InstructionType::SUBTRACT);
         break;
     }
     case Lexing::TokenType::STAR: {
-        buffer.push_back(VM::InstructionType::INT64_MULTIPLY);
+        buffer.push_back(VM::InstructionType::MULTIPLY);
         break;
     }
     case Lexing::TokenType::SLASH: {
-        buffer.push_back(VM::InstructionType::INT64_DIVIDE);
+        buffer.push_back(VM::InstructionType::DIVIDE);
         break;
     }
     case Lexing::TokenType::MODULO: {
-        buffer.push_back(VM::InstructionType::INT64_MODULO);
+        buffer.push_back(VM::InstructionType::MODULO);
         break;
     }
     case Lexing::TokenType::OR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_OR); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_OR); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::OR); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::OR); break;
         }
         break;
     }
     case Lexing::TokenType::OROR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_OR); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_OR); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::OR); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::OR); break;
         }
         break;
     }
     case Lexing::TokenType::AND: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_AND); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_AND); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::AND); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::AND); break;
         }
         break;
     }
     case Lexing::TokenType::ANDAND: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_AND); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_AND); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::AND); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::AND); break;
         }
         break;
     }
     case Lexing::TokenType::XOR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_XOR); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_XOR); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::XOR); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::XOR); break;
         }
         break;
     }
     case Lexing::TokenType::XORXOR: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_XOR); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_XOR); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::XOR); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::XOR); break;
         }
         break;
     }
     case Lexing::TokenType::NOT: {
-        buffer.push_back(VM::InstructionType::INT64_NOT);
+        buffer.push_back(VM::InstructionType::NOT);
         break;
     }
     case Lexing::TokenType::BANG: {
-        buffer.push_back(VM::InstructionType::BOOL_NOT);
+        buffer.push_back(VM::InstructionType::NOT);
         break;
     }
     case Lexing::TokenType::EQUAL_EQUAL: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_EQUAL); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_EQUAL); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::EQUAL); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::EQUAL); break;
         }
         break;
     }
     case Lexing::TokenType::BANG_EQUAL: {
         switch(this->type) {
-            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::INT64_NOT_EQUAL); break;
-            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::BOOL_NOT_EQUAL); break;
+            case Grammar::TypeIndexes::INT64: buffer.push_back(VM::InstructionType::NOT_EQUAL); break;
+            case Grammar::TypeIndexes::BOOL: buffer.push_back(VM::InstructionType::NOT_EQUAL); break;
         }
         break;
     }
     case Lexing::TokenType::SMALLER: {
-        buffer.push_back(VM::InstructionType::INT64_SMALLER); 
+        buffer.push_back(VM::InstructionType::SMALLER); 
         break;
     }
     case Lexing::TokenType::SMALLER_EQUAL: {
-        buffer.push_back(VM::InstructionType::INT64_SMALLER_EQUAL); 
+        buffer.push_back(VM::InstructionType::SMALLER_EQUAL); 
         break;
     }
     case Lexing::TokenType::BIGGER: {
-        buffer.push_back(VM::InstructionType::INT64_BIGGER); 
+        buffer.push_back(VM::InstructionType::BIGGER); 
         break;
     }
     case Lexing::TokenType::BIGGER_EQUAL: {
-        buffer.push_back(VM::InstructionType::INT64_BIGGER_EQUAL); 
+        buffer.push_back(VM::InstructionType::BIGGER_EQUAL); 
         break;
     }
     }
@@ -225,15 +229,15 @@ void UnaryExpression::generateBytecode(std::vector<VM::Byte> &buffer, Context &c
         break;
     }
     case Lexing::TokenType::UNARY_MINUS: {
-        buffer.push_back(VM::InstructionType::INT64_NEGATE);
+        buffer.push_back(VM::InstructionType::NEGATE);
         break;
     }
     case Lexing::TokenType::NOT: {
-        buffer.push_back(VM::InstructionType::INT64_NOT);
+        buffer.push_back(VM::InstructionType::NOT);
         break;
     }
     case Lexing::TokenType::BANG: {
-        buffer.push_back(VM::InstructionType::BOOL_NOT);
+        buffer.push_back(VM::InstructionType::NOT);
         break;
     }
     default: {
@@ -303,20 +307,26 @@ void DeclarationStatement::generateBytecode(std::vector<VM::Byte> &buffer, Conte
             this->expr->generateBytecode(buffer, ctx);
         }
 
-        buffer.push_back(VM::InstructionType::INT64_LOAD_INTO_STACK);
+        buffer.push_back(VM::InstructionType::INT64_LOAD);
         buffer.push_back(ctx.variables[currentVariable].offset);
+        buffer.push_back(VM::InstructionType::STACK_PTR_LOAD);
+        buffer.push_back(VM::InstructionType::INT64_LOAD_INTO_ADDRESS);
         break;
     }
     case TypeIndexes::BOOL: {
         auto currentVariable = ctx.addVariable(this->name, this->type);
+
         if(!this->expr) {
             buffer.push_back(VM::InstructionType::BOOL_LOAD);
             buffer.push_back(false);
         } else {
             this->expr->generateBytecode(buffer, ctx);
         }
-        buffer.push_back(VM::InstructionType::BOOL_LOAD_INTO_STACK);
+
+        buffer.push_back(VM::InstructionType::INT64_LOAD);
         buffer.push_back(ctx.variables[currentVariable].offset);
+        buffer.push_back(VM::InstructionType::STACK_PTR_LOAD);
+        buffer.push_back(VM::InstructionType::BOOL_LOAD_INTO_ADDRESS);
         break;
     }
     default: {
