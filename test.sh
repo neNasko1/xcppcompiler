@@ -1,4 +1,6 @@
-./compile.sh
+make all
+
+mkdir -p test-suite/current-output
 
 for file in test-suite/input/*
 do	
@@ -9,11 +11,12 @@ do
 	filename="$(basename $file)"
 	printf "${NC}$filename "
 
+	./compiler "$file" > test-suite/current-output/"$filename"
+
 	if cmp --silent -- test-suite/current-output/"$filename" test-suite/output/"$filename"; then
   		printf "${GREEN}CORRECT \n"
 	else
   		printf "${RED}WRONG \n"
 	fi
 	
-	./run.sh "$file" test-suite/current-output/"$filename"
 done
