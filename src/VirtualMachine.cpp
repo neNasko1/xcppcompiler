@@ -18,7 +18,33 @@ void VMError(T... t) {
     exit(0);
 }
 
-VirtualMachine::VirtualMachine(std::vector<Byte> &_code) : code(_code), nextByte(0) {
+VirtualMachine::Code::Code(const std::vector<Byte> &_bytes, const std::vector<size_t> &_lookupTable) 
+    : bytes(_bytes), lookupTable(_lookupTable), nextByte(0) {}
+
+VirtualMachine::Code::~Code() {}
+
+Byte VirtualMachine::Code::peek() {
+    if(this->bytes.size() <= this->nextByte) {
+        VMError("Not enough bytes in code to advance");
+    }
+    return this->bytes[this->nextByte];
+}
+
+Byte VirtualMachine::Code::advance() {
+    if(this->bytes.size() <= this->nextByte) {
+        VMError("Not enough bytes in code to advance");
+    }
+    return this->bytes[this->nextByte ++];
+}
+
+void VirtualMachine::Code::reset() {
+    this->nextByte = 0;
+}
+
+
+VirtualMachine::VirtualMachine(const Code &_code) {
+    this->code = _code;
+
     // TODO: parse this from command line
     const uint64_t STACK_SIZE = 1 << 16;
     this->stack = (uint8_t*)malloc(STACK_SIZE);    
@@ -26,18 +52,6 @@ VirtualMachine::VirtualMachine(std::vector<Byte> &_code) : code(_code), nextByte
 
 VirtualMachine::~VirtualMachine() {
     free(this->stack);
-}
-
-Byte VirtualMachine::peek() {
-    VMError("Not enough bytes in code");
-    return this->code[this->nextByte];
-}
-
-Byte VirtualMachine::advance() {
-    if(this->code.size() <= this->nextByte) {
-        VMError("Not enough bytes in code");
-    }
-    return this->code[this->nextByte ++];
 }
 
 MemoryCell VirtualMachine::top() {
@@ -61,8 +75,10 @@ void VirtualMachine::push(const MemoryCell &cell) {
 }
 
 void VirtualMachine::execute() {
-    while(this->nextByte < this->code.size()) {
-        Byte next = this->advance();
+    this->code.reset();
+
+    while(this->code.nextByte < this->code.bytes.size()) {
+        Byte next = this->code.advance();
 
         switch(next) {
         case InstructionType::DUPLICATE: {
@@ -80,6 +96,19 @@ void VirtualMachine::execute() {
             auto b = this->pop();
             this->push(a);
             this->push(b);
+            break;
+        }
+        case InstructionType::JUMP: {
+            auto location = this->code.advance();
+            this->code.nextByte = this->code.lookupTable[location];
+            break;
+        }
+        case InstructionType::JUMP_IF: {
+            auto location = this->code.advance();
+            auto cond = this->pop(); // This has to be true;
+            if(cond.as.BOOL) {
+                this->code.nextByte = this->code.lookupTable[location];            
+            }
             break;
         }
 
@@ -171,11 +200,11 @@ void VirtualMachine::execute() {
         }   
         case InstructionType::INT64_LOAD: {
             // Load next integer
-            this->push(int64MemoryCell((int64_t)this->advance()));
+            this->push(int64MemoryCell((int64_t)this->code.advance()));
             break;
         }
         case InstructionType::BOOL_LOAD: {
-            this->push(boolMemoryCell((bool)this->advance()));
+            this->push(boolMemoryCell((bool)this->code.advance()));
             break;
         }
 
@@ -217,6 +246,39 @@ void VirtualMachine::execute() {
         default:
             VMError("Unsupported instruction type: ", next);
         }
+    }
+}
+
+void VirtualMachine::disassemble() {
+    this->code.reset();
+
+    while(this->code.nextByte < this->code.bytes.size()) {
+        Byte next = this->code.advance();
+        std::cout << this->code.nextByte - 1 << ": " << disassemblyNames[next] << " ";
+
+        switch(next) {
+        case InstructionType::JUMP: {
+            auto location = this->code.advance();
+            std::cout << this->code.lookupTable[location];
+            break;
+        }
+        case InstructionType::JUMP_IF: {
+            auto location = this->code.advance();
+            std::cout << this->code.lookupTable[location];
+            break;
+        }
+
+        case InstructionType::INT64_LOAD: {
+            // Load next integer
+            std::cout << (int64_t)this->code.advance();
+            break;
+        }
+        case InstructionType::BOOL_LOAD: {
+            std::cout << (bool)this->code.advance();
+            break;
+        }
+        }
+        std::cout << "\n";
     }
 }
 

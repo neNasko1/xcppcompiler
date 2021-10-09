@@ -1,5 +1,7 @@
 {
-    var x : u16 = 1243;
-    var y : u8;
-    var memo : u32 = x * y;
+    var x : int64 = 1243;
+    var y : int64;
+    var memo = x * y;
+    var b : bool = x > y;
+    print(x, y, memo, b);
 }

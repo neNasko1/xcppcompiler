@@ -146,7 +146,7 @@ MemoryCell memoryCellSmaller(const MemoryCell &a, const MemoryCell &b) {
     assert(a.type == b.type); // This is always true
 
     switch(a.type) {
-    case VariableType::INT64: return int64MemoryCell(a.as.INT64 < b.as.INT64); break;
+    case VariableType::INT64: return boolMemoryCell(a.as.INT64 < b.as.INT64); break;
     }
 
     VMError("Operation smaller is not defined for type ", Grammar::Type::globalTypes[a.type].name);
@@ -157,7 +157,7 @@ MemoryCell memoryCellSmallerEqual(const MemoryCell &a, const MemoryCell &b) {
     assert(a.type == b.type); // This is always true
 
     switch(a.type) {
-    case VariableType::INT64: return int64MemoryCell(a.as.INT64 <= b.as.INT64); break;
+    case VariableType::INT64: return boolMemoryCell(a.as.INT64 <= b.as.INT64); break;
     }
 
     VMError("Operation smaller or equal is not defined for type ", Grammar::Type::globalTypes[a.type].name);
@@ -168,7 +168,7 @@ MemoryCell memoryCellBigger(const MemoryCell &a, const MemoryCell &b) {
     assert(a.type == b.type); // This is always true
 
     switch(a.type) {
-    case VariableType::INT64: return int64MemoryCell(a.as.INT64 > b.as.INT64); break;
+    case VariableType::INT64: return boolMemoryCell(a.as.INT64 > b.as.INT64); break;
     }
 
     VMError("Operation bigger is not defined for type ", Grammar::Type::globalTypes[a.type].name);
@@ -179,7 +179,7 @@ MemoryCell memoryCellBiggerEqual(const MemoryCell &a, const MemoryCell &b) {
     assert(a.type == b.type); // This is always true
 
     switch(a.type) {
-    case VariableType::INT64: return int64MemoryCell(a.as.INT64 >= b.as.INT64); break;
+    case VariableType::INT64: return boolMemoryCell(a.as.INT64 >= b.as.INT64); break;
     }
 
     VMError("Operation bigger or equal is not defined for type ", Grammar::Type::globalTypes[a.type].name);
@@ -190,8 +190,8 @@ MemoryCell memoryCellEqual(const MemoryCell &a, const MemoryCell &b) {
     assert(a.type == b.type); // This is always true
 
     switch(a.type) {
-    case VariableType::INT64: return int64MemoryCell(a.as.INT64 == b.as.INT64); break;
-    case VariableType::BOOL : return  boolMemoryCell(a.as.BOOL  == b.as.BOOL); break;
+    case VariableType::INT64: return boolMemoryCell(a.as.INT64 == b.as.INT64); break;
+    case VariableType::BOOL : return boolMemoryCell(a.as.BOOL  == b.as.BOOL); break;
     }
 
     VMError("Operation xor is not defined for type ", Grammar::Type::globalTypes[a.type].name);
@@ -202,8 +202,8 @@ MemoryCell memoryCellNotEqual(const MemoryCell &a, const MemoryCell &b) {
     assert(a.type == b.type); // This is always true
 
     switch(a.type) {
-    case VariableType::INT64: return int64MemoryCell(a.as.INT64 != b.as.INT64); break;
-    case VariableType::BOOL : return  boolMemoryCell(a.as.BOOL  != b.as.BOOL); break;
+    case VariableType::INT64: return boolMemoryCell(a.as.INT64 != b.as.INT64); break;
+    case VariableType::BOOL : return boolMemoryCell(a.as.BOOL  != b.as.BOOL); break;
     }
 
     VMError("Operation xor is not defined for type ", Grammar::Type::globalTypes[a.type].name);

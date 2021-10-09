@@ -28,13 +28,13 @@ int main(int argc, char *argv[]) {
     Parsing::Parser parser(lexer.lexed);
     Grammar::Statement *firstLine = (Grammar::Statement*)parser.recognizeStatementList();
 
-    std::vector<VM::Byte> code;
-
+    VM::VirtualMachine::Code code;
     Grammar::Context ctx;
 
     firstLine->generateBytecode(code, ctx);
-
     VM::VirtualMachine vm(code);
+
+    // vm.disassemble();
     vm.execute();
 
     delete firstLine;

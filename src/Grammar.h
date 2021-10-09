@@ -52,7 +52,7 @@ public:
      * 
      * @param buffer 
      */
-    virtual void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) = 0;
+    virtual void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx) = 0;
 
     /**
      * @brief Deduce return type of expression
@@ -109,7 +109,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
@@ -170,7 +170,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
@@ -224,7 +224,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
@@ -278,7 +278,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 
     /**
      * @brief Deduce return type of expression
@@ -320,7 +320,7 @@ public:
      * 
      * @param buffer 
      */
-    virtual void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx) = 0;
+    virtual void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx) = 0;
 };
 
 class DeclarationStatement final : public Statement {
@@ -370,7 +370,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 };
 
 /**
@@ -411,7 +411,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 };
 
 /**
@@ -464,7 +464,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 };
 
 /**
@@ -500,7 +500,7 @@ public:
      * 
      * @param buffer 
      */
-    void generateBytecode(std::vector<VM::Byte> &buffer, Context &ctx);
+    void generateBytecode(VM::VirtualMachine::Code &buffer, Context &ctx);
 };
 
 };
