@@ -5,6 +5,7 @@ CXXFLAGS := -std=c++20
 
 srcfiles := $(shell find . -wholename "./*.cpp")
 objects  := $(patsubst %.cpp, %.o, $(srcfiles))
+objects  := $(patsubst %./, %./build/, $(srcfiles))
 
 all: $(appname)
 
