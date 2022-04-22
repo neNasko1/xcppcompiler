@@ -1,4 +1,4 @@
-g++ src/*.cpp main.cpp -o compiler
+g++ src/*.cpp -o compiler -std=c++2a
 
 echo "Compiler was compiled succesfully"
 
