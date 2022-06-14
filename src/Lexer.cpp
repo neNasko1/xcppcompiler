@@ -32,12 +32,12 @@ int32_t typeOfChar(const char c) {
     return -1;
 }
 
-template <typename... T> 
+template <typename... T>
 void LexerErrorPrint(T... t) {
     (std::cerr << ... << t) << "\n";
 }
 
-template <typename... T> 
+template <typename... T>
 void LexerError(T... t) {
     std::cerr << "There was an error while parsing " << "\n";
     LexerErrorPrint(t...);
@@ -98,7 +98,7 @@ TokenType LexerTrie::findWord(const std::string &toFind) const {
 
 /***********************Token class*************************/
 Token::Token() {}
-Token::Token(const TokenType &_type, const std::string &_lexeme, const int32_t &_lineNmb, const int32_t &_startPos) 
+Token::Token(const TokenType &_type, const std::string &_lexeme, const int32_t &_lineNmb, const int32_t &_startPos)
             : type(_type), lexeme(_lexeme), lineNmb(_lineNmb), startPos(_startPos) {}
 Token::~Token() {}
 
@@ -107,7 +107,7 @@ std::ostream& operator <<(std::ostream &os, const Token &token) {
 }
 
 bool canBeUnaryOperator(const Token &token) {
-    return token.type == TokenType::PLUS || token.type == TokenType::BANG || token.type == TokenType::AND 
+    return token.type == TokenType::PLUS || token.type == TokenType::BANG || token.type == TokenType::AND
         || token.type == TokenType::NOT || token.type == TokenType::STAR || token.type == TokenType::MINUS;
 }
 
@@ -120,12 +120,12 @@ void transformToMatchingUnary(Token &token) {
         token.type = TokenType::UNARY_DEREFERENCE;
     } else if(token.type == TokenType::AND) {
         token.type = TokenType::UNARY_REFERENCE;
-    } 
+    }
 }
 
 /***********************Lexer class ************************/
 Lexer::Lexer() : code(), codePtr(0), lineNmb(0), charNmb(0), lexTrie() {}
-Lexer::Lexer(std::string _code) : code(_code), codePtr(0), lineNmb(0), charNmb(0), lexTrie() {}
+Lexer::Lexer(std::string code) : code(code), codePtr(0), lineNmb(0), charNmb(0), lexTrie() {}
 Lexer::~Lexer() {}
 
 char Lexer::peek() const { return code[codePtr]; }
@@ -259,12 +259,12 @@ void Lexer::printLexed() const {
     std::cout.copyfmt(init);
 }
 
-void setupLexer(Lexer &lexer) {
-    std::vector<std::pair<std::string, TokenType> > stringToTokentype = {
+void Lexer::setupBasicLexer(Lexer &lexer) {
+	std::vector<std::pair<std::string, TokenType> > stringToTokentype = {
         //Keywords
         {"else", TokenType::ELSE}, {"function", TokenType::FUNCTION}, {"function", TokenType::FUNCTION},
         {"for", TokenType::FOR}, {"if", TokenType::IF}, {"return", TokenType::RETURN}, {"while", TokenType::WHILE},
-        {"do", TokenType::DO}, {"var", TokenType::VAR},
+        {"do", TokenType::DO}, {"let", TokenType::VAR},
         //Operators
         {"+", TokenType::PLUS}, {"-", TokenType::MINUS}, {"*", TokenType::STAR}, {"/", TokenType::SLASH}, {"%", TokenType::MODULO}, //'Constant' operators
         {"|", TokenType::OR}, {"&", TokenType::AND}, {"^", TokenType::XOR}, {"~", TokenType::NOT}, //'Constant' bitwise operators
@@ -280,7 +280,8 @@ void setupLexer(Lexer &lexer) {
         //Literals
         {"false", TokenType::BOOLEAN}, {"true", TokenType::BOOLEAN}
     };
-    for(const auto &it : stringToTokentype) {
+
+	for(const auto &it : stringToTokentype) {
         lexer.addWord(it.first, it.second);
     }
 }

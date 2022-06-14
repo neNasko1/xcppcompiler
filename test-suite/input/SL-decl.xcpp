@@ -1,5 +1,5 @@
 {
-    var x : u16 = 1243;
-    var y : u8;
-    var memo : u32 = x * y;
+    let x : u16 = 1243;
+    let y : u8;
+    let memo : u32 = x * y;
 }

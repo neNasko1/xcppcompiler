@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     buffer << inputCode.rdbuf();
 
     Lexing::Lexer lexer(buffer.str());
-    Lexing::setupLexer(lexer);
+    Lexing::Lexer::setupBasicLexer(lexer);
     lexer.lex();
 
     // lex.printLexed();

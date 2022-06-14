@@ -1,0 +1,17 @@
+Statement list { 
+,  Declaration statement { 
+,  ,  x : u16
+,  ,  1243
+,  }
+,  Declaration statement { 
+,  ,  y : u8
+,  }
+,  Declaration statement { 
+,  ,  memo : u32
+,  ,  Binary expression {
+,  ,  ,  x
+,  ,  ,  *
+,  ,  ,  y
+,  ,  }
+,  }
+}
