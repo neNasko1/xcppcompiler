@@ -1,11 +1,9 @@
-./compile.sh
-
 for file in test-suite/input/*
-do	
+do
 	NC='\033[0m'
 	RED='\033[0;31m'
-	GREEN='\033[0;32m'	
-	
+	GREEN='\033[0;32m'
+
 	filename="$(basename $file)"
 	printf "${NC}$filename "
 
@@ -14,6 +12,6 @@ do
 	else
   		printf "${RED}WRONG \n"
 	fi
-	
+
 	./run.sh "$file" test-suite/current-output/"$filename"
 done
