@@ -20,7 +20,10 @@ rm:
 	@rm $(EXECUTABLE) || :
 
 test:
-	@make rm
 	@make
 	@./test.sh
+
+recompile:
+	@make rm
+	@make test
 
